@@ -13,8 +13,36 @@ export type QRType =
   | 'facebook'
   | 'youtube'
   | 'linkedin'
+  | 'tiktok'
+  | 'x'
+  | 'snapchat'
+  | 'pinterest'
+  | 'telegram'
+  | 'threads'
+  | 'twitch'
+  | 'reddit'
+  | 'discord'
+  | 'bluesky'
+  | 'github'
   | 'crypto'
   | 'payment';
+
+export type SocialQRType =
+  | 'instagram'
+  | 'facebook'
+  | 'youtube'
+  | 'linkedin'
+  | 'tiktok'
+  | 'x'
+  | 'snapchat'
+  | 'pinterest'
+  | 'telegram'
+  | 'threads'
+  | 'twitch'
+  | 'reddit'
+  | 'discord'
+  | 'bluesky'
+  | 'github';
 
 export type PaymentMethod = 'bank' | 'raast' | 'mobile-wallet';
 

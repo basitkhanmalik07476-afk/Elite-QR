@@ -10,14 +10,12 @@ import {
   Contact,
   MapPin,
   Calendar,
-  Instagram,
-  Facebook,
-  Youtube,
-  Linkedin,
   Coins,
   Banknote,
 } from 'lucide-react';
-import { QRType } from '../../types';
+import { QRType, SocialQRType } from '../../types';
+import { SocialPlatformIcon } from '../SocialPlatformIcon';
+import { SOCIAL_PLATFORMS } from '../../utils/socialPlatforms';
 
 interface QRTypeSelectorProps {
   selectedType: QRType;
@@ -27,7 +25,8 @@ interface QRTypeSelectorProps {
 interface TypeItem {
   type: QRType;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string }>;
+  socialType?: SocialQRType;
   category: 'web' | 'comm' | 'business' | 'social';
 }
 
@@ -42,10 +41,12 @@ const QR_TYPES: TypeItem[] = [
   { type: 'vcard', label: 'Contact Card', icon: Contact, category: 'business' },
   { type: 'location', label: 'Google Maps', icon: MapPin, category: 'business' },
   { type: 'event', label: 'Calendar Event', icon: Calendar, category: 'business' },
-  { type: 'instagram', label: 'Instagram', icon: Instagram, category: 'social' },
-  { type: 'facebook', label: 'Facebook', icon: Facebook, category: 'social' },
-  { type: 'youtube', label: 'YouTube', icon: Youtube, category: 'social' },
-  { type: 'linkedin', label: 'LinkedIn', icon: Linkedin, category: 'social' },
+  ...SOCIAL_PLATFORMS.map((platform) => ({
+    type: platform.type,
+    label: platform.label,
+    socialType: platform.type,
+    category: 'social' as const,
+  })),
   { type: 'crypto', label: 'Crypto Address', icon: Coins, category: 'business' },
   { type: 'payment', label: 'Bank / Wallet Payment', icon: Banknote, category: 'business' },
 ];
@@ -58,7 +59,7 @@ export const QRTypeSelector: React.FC<QRTypeSelectorProps> = ({ selectedType, on
           Select QR Code Content Type
         </label>
         <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">
-          16 Types Available
+          {QR_TYPES.length} Types Available
         </span>
       </div>
 
@@ -85,7 +86,11 @@ export const QRTypeSelector: React.FC<QRTypeSelectorProps> = ({ selectedType, on
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                {Icon ? (
+                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                ) : item.socialType ? (
+                  <SocialPlatformIcon platform={item.socialType} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                ) : null}
               </div>
               <span className="text-[11px] sm:text-xs font-medium truncate">{item.label}</span>
             </button>

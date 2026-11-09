@@ -8,6 +8,12 @@ export interface PresetLogo {
 const createPresetSvg = (background: string, icon: string) =>
   `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24"><rect x="1" y="1" width="22" height="22" rx="7" fill="${background}"/>${icon}</svg>`;
 
+const createSocialPreset = (background: string, mark: string, foreground = 'white') =>
+  createPresetSvg(
+    background,
+    `<text x="12" y="16.5" font-family="Arial,sans-serif" font-size="${mark.length > 2 ? 8 : 12}" font-weight="bold" fill="${foreground}" text-anchor="middle">${mark}</text>`,
+  );
+
 // Crisp vector SVG Data URIs formatted for QRCodeStyling center image
 export const PRESET_LOGOS: PresetLogo[] = [
   {
@@ -49,6 +55,22 @@ export const PRESET_LOGOS: PresetLogo[] = [
     category: 'social',
     dataUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24"><rect width="22" height="22" x="1" y="1" rx="5" fill="%230A66C2"/><text x="12" y="17" font-family="Arial, sans-serif" font-weight="bold" font-size="14" fill="white" text-anchor="middle">in</text></svg>`,
   },
+  {
+    id: 'tiktok',
+    name: 'TikTok',
+    category: 'social',
+    dataUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24"><rect x="1" y="1" width="22" height="22" rx="7" fill="%23000000"/><path d="M14.1 4.5c.3 1.8 1.4 3.1 3.3 3.6v2.8a7.8 7.8 0 0 1-3.3-1.2v4.5a4.8 4.8 0 1 1-4.8-4.8c.3 0 .7 0 1 .1v3a1.9 1.9 0 1 0 1 1.7V4.5z" fill="%2325F4EE" transform="translate(-.6 0)"/><path d="M14.1 4.5c.3 1.8 1.4 3.1 3.3 3.6v2.8a7.8 7.8 0 0 1-3.3-1.2v4.5a4.8 4.8 0 1 1-4.8-4.8c.3 0 .7 0 1 .1v3a1.9 1.9 0 1 0 1 1.7V4.5z" fill="%23FE2C55" transform="translate(.6 0)"/><path d="M14.1 4.5c.3 1.8 1.4 3.1 3.3 3.6v2.8a7.8 7.8 0 0 1-3.3-1.2v4.5a4.8 4.8 0 1 1-4.8-4.8c.3 0 .7 0 1 .1v3a1.9 1.9 0 1 0 1 1.7V4.5z" fill="white"/></svg>`,
+  },
+  { id: 'x', name: 'X (Twitter)', category: 'social', dataUrl: createSocialPreset('%23000000', 'X') },
+  { id: 'snapchat', name: 'Snapchat', category: 'social', dataUrl: createSocialPreset('%23FFFC00', 'SC', '%23000000') },
+  { id: 'pinterest', name: 'Pinterest', category: 'social', dataUrl: createSocialPreset('%23BD081C', 'P') },
+  { id: 'telegram', name: 'Telegram', category: 'social', dataUrl: createSocialPreset('%23229ED9', 'TG') },
+  { id: 'threads', name: 'Threads', category: 'social', dataUrl: createSocialPreset('%23101010', '@') },
+  { id: 'twitch', name: 'Twitch', category: 'social', dataUrl: createSocialPreset('%239146FF', 'TW') },
+  { id: 'reddit', name: 'Reddit', category: 'social', dataUrl: createSocialPreset('%23FF4500', 'R') },
+  { id: 'discord', name: 'Discord', category: 'social', dataUrl: createSocialPreset('%235865F2', 'DC') },
+  { id: 'bluesky', name: 'Bluesky', category: 'social', dataUrl: createSocialPreset('%230085FF', 'BS') },
+  { id: 'github', name: 'GitHub', category: 'social', dataUrl: createSocialPreset('%2324292F', 'GH') },
   {
     id: 'bitcoin',
     name: 'Bitcoin',

@@ -1,5 +1,6 @@
 import { QRFormState, QRType } from '../types';
 export type { QRFormState } from '../types';
+import { generateSocialProfileUrl, SOCIAL_PLATFORMS } from './socialPlatforms';
 
 export const initialFormState: QRFormState = {
   url: 'https://eliteqr.dev',
@@ -156,28 +157,27 @@ export function generatePayload(type: QRType, state: QRFormState): { payload: st
       return { payload, displayTitle: `Event: ${state.eventTitle}` };
     }
 
-    case 'instagram': {
-      const handle = state.socialUsername.replace(/^@/, '').trim();
-      const payload = `https://instagram.com/${handle}`;
-      return { payload, displayTitle: `Instagram: @${handle}` };
-    }
-
-    case 'facebook': {
-      const handle = state.socialUsername.replace(/^@/, '').trim();
-      const payload = `https://facebook.com/${handle}`;
-      return { payload, displayTitle: `Facebook: ${handle}` };
-    }
-
-    case 'youtube': {
-      const handle = state.socialUsername.trim();
-      const payload = handle.startsWith('http') ? handle : `https://youtube.com/@${handle.replace(/^@/, '')}`;
-      return { payload, displayTitle: `YouTube: ${handle}` };
-    }
-
-    case 'linkedin': {
-      const handle = state.socialUsername.trim();
-      const payload = handle.startsWith('http') ? handle : `https://linkedin.com/in/${handle.replace(/^@/, '')}`;
-      return { payload, displayTitle: `LinkedIn: ${handle}` };
+    case 'instagram':
+    case 'facebook':
+    case 'youtube':
+    case 'linkedin':
+    case 'tiktok':
+    case 'x':
+    case 'snapchat':
+    case 'pinterest':
+    case 'telegram':
+    case 'threads':
+    case 'twitch':
+    case 'reddit':
+    case 'discord':
+    case 'bluesky':
+    case 'github': {
+      const payload = generateSocialProfileUrl(type, state.socialUsername);
+      const platform = SOCIAL_PLATFORMS.find((item) => item.type === type);
+      return {
+        payload,
+        displayTitle: `${platform?.label ?? 'Social'}: ${state.socialUsername.trim()}`,
+      };
     }
 
     case 'crypto': {
@@ -315,12 +315,21 @@ export function getFormStateFromPayload(type: QRType, payload: string): Partial<
     case 'instagram':
     case 'facebook':
     case 'youtube':
-    case 'linkedin': {
-      const socialUrl = parsedUrl();
-      if (!socialUrl) return {};
-      const path = socialUrl.pathname.replace(/\/+$/, '');
-      const handle = type === 'linkedin' ? path.replace(/^\/in\//, '') : type === 'youtube' ? path.replace(/^\/@/, '') : path.slice(1);
-      return { socialUsername: handle };
+    case 'linkedin':
+    case 'tiktok': {
+      return { socialUsername: payload };
+    }
+    case 'x':
+    case 'snapchat':
+    case 'pinterest':
+    case 'telegram':
+    case 'threads':
+    case 'twitch':
+    case 'reddit':
+    case 'discord':
+    case 'bluesky':
+    case 'github': {
+      return { socialUsername: payload };
     }
     case 'crypto': {
       const cryptoUrl = parsedUrl();
@@ -355,7 +364,7 @@ export function getFormStateFromPayload(type: QRType, payload: string): Partial<
 }
 
 export interface ParsedScannedContent {
-  type: 'url' | 'wifi' | 'email' | 'phone' | 'sms' | 'vcard' | 'location' | 'text';
+  type: 'url' | 'wifi' | 'email' | 'phone' | 'sms' | 'vcard' | 'location' | 'payment' | 'text';
   title: string;
   actionUrl?: string;
   actionLabel?: string;
@@ -364,6 +373,31 @@ export interface ParsedScannedContent {
 
 export function parseScannedData(raw: string): ParsedScannedContent {
   const trimmed = raw.trim();
+
+  if (/^PAYMENT DETAILS \(PAKISTAN\)/i.test(trimmed)) {
+    const readValue = (label: string) =>
+      trimmed
+        .split(/\r?\n/)
+        .find((line) => line.startsWith(`${label}:`))
+        ?.slice(label.length + 1)
+        .trim() ?? '';
+    const method = readValue('Payment method');
+    const accountName = readValue('Account title');
+    const provider = readValue('Bank / wallet');
+    const identifier = readValue('Account / IBAN / Raast ID');
+    const instructions = readValue('Payment note');
+    return {
+      type: 'payment',
+      title: accountName ? `Payment details for ${accountName}` : 'Bank / wallet payment details',
+      details: {
+        ...(method ? { 'Payment method': method } : {}),
+        ...(accountName ? { 'Account holder': accountName } : {}),
+        ...(provider ? { 'Bank / wallet': provider } : {}),
+        ...(identifier ? { 'Account / Payment ID': identifier } : {}),
+        ...(instructions ? { Instructions: instructions } : {}),
+      },
+    };
+  }
 
   // Wi-Fi detection
   if (trimmed.startsWith('WIFI:') || trimmed.startsWith('wifi:')) {

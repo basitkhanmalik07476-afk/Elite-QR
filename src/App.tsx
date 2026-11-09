@@ -15,6 +15,7 @@ import { ToastContainer } from './components/Toast';
 import { ToastMessage, HistoryItem, QRFormState, QRType } from './types';
 import { generatePayload, getFormStateFromPayload, initialFormState } from './utils/qrPayloads';
 import { getHistory, getInitialTheme, setSavedTheme, defaultDesignConfig } from './utils/qrStorage';
+import { getSocialTypeFromUrl } from './utils/socialPlatforms';
 
 export default function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme());
@@ -113,16 +114,19 @@ export default function App() {
         <QRScanner
           onToast={addToast}
           onUseInGenerator={(payload) => {
-            const type: QRType = /^https?:\/\//i.test(payload)
-              ? 'url'
-              : /^PAYMENT DETAILS \(PAKISTAN\)/i.test(payload)
-                ? 'payment'
-                : 'text';
+            const socialType = getSocialTypeFromUrl(payload);
+            const type: QRType = /^PAYMENT DETAILS \(PAKISTAN\)/i.test(payload)
+              ? 'payment'
+              : socialType
+                ? socialType
+                : /^https?:\/\//i.test(payload)
+                  ? 'url'
+                  : 'text';
             const formState = {
               ...initialFormState,
               ...(type === 'url'
                 ? { url: payload }
-                : type === 'payment'
+                : type === 'payment' || socialType
                   ? getFormStateFromPayload(type, payload)
                   : { text: payload }),
             };

@@ -489,6 +489,17 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                       </button>
                     )}
 
+                    {parsedResult?.type === 'payment' && parsedResult.details?.['Account / Payment ID'] && (
+                      <button
+                        type="button"
+                        onClick={() => handleCopyScanned(parsedResult.details?.['Account / Payment ID'])}
+                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer"
+                      >
+                        <Copy className="w-4 h-4" />
+                        <span>Copy Account / Payment ID</span>
+                      </button>
+                    )}
+
                     {/* Load into QR Generator */}
                     {onUseInGenerator && (
                       <button

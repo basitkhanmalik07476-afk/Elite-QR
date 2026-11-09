@@ -10,10 +10,6 @@ import {
   Contact,
   MapPin,
   Calendar,
-  Instagram,
-  Facebook,
-  Youtube,
-  Linkedin,
   Coins,
   Banknote,
   Eye,
@@ -22,6 +18,8 @@ import {
 } from 'lucide-react';
 import { PaymentMethod, QRType } from '../../types';
 import { QRFormState } from '../../utils/qrPayloads';
+import { SOCIAL_PLATFORMS } from '../../utils/socialPlatforms';
+import { SocialPlatformIcon } from '../SocialPlatformIcon';
 
 interface QRInputFormsProps {
   type: QRType;
@@ -31,6 +29,7 @@ interface QRInputFormsProps {
 
 export const QRInputForms: React.FC<QRInputFormsProps> = ({ type, formState, onChange }) => {
   const [showWifiPass, setShowWifiPass] = React.useState(false);
+  const socialPlatform = SOCIAL_PLATFORMS.find((platform) => platform.type === type);
 
   // Quick protocol helper
   const handleUrlPrefix = (protocol: 'https://' | 'http://') => {
@@ -534,34 +533,20 @@ export const QRInputForms: React.FC<QRInputFormsProps> = ({ type, formState, onC
       )}
 
       {/* 11-14. Social Media Types */}
-      {(type === 'instagram' || type === 'facebook' || type === 'youtube' || type === 'linkedin') && (
+      {socialPlatform && (
         <div className="space-y-3">
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            {type === 'instagram' && 'Instagram Username'}
-            {type === 'facebook' && 'Facebook Page or Username'}
-            {type === 'youtube' && 'YouTube Channel Name or Handle'}
-            {type === 'linkedin' && 'LinkedIn Profile Handle or Custom URL'}
+            {socialPlatform.label} Profile or Link
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              {type === 'instagram' && <Instagram className="w-4 h-4 text-pink-500" />}
-              {type === 'facebook' && <Facebook className="w-4 h-4 text-blue-600" />}
-              {type === 'youtube' && <Youtube className="w-4 h-4 text-red-500" />}
-              {type === 'linkedin' && <Linkedin className="w-4 h-4 text-blue-500" />}
+              <SocialPlatformIcon platform={socialPlatform.type} className="w-4 h-4" />
             </div>
             <input
               type="text"
               value={formState.socialUsername}
               onChange={(e) => onChange('socialUsername', e.target.value)}
-              placeholder={
-                type === 'instagram'
-                  ? 'username (without @)'
-                  : type === 'facebook'
-                  ? 'page_or_user'
-                  : type === 'youtube'
-                  ? '@creator'
-                  : 'firstname-lastname'
-              }
+              placeholder={socialPlatform.placeholder}
               className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-base sm:text-sm text-slate-900 dark:text-slate-100 min-h-[44px]"
             />
           </div>

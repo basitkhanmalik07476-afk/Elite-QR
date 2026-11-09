@@ -4,7 +4,9 @@ const STORAGE_KEY = 'elite_qr_history_v1';
 const THEME_KEY = 'elite_qr_theme_v1';
 const QR_TYPES = new Set<QRType>([
   'url', 'text', 'email', 'phone', 'whatsapp', 'sms', 'wifi', 'vcard',
-  'location', 'event', 'instagram', 'facebook', 'youtube', 'linkedin', 'crypto', 'payment',
+  'location', 'event', 'instagram', 'facebook', 'youtube', 'linkedin', 'tiktok',
+  'x', 'snapchat', 'pinterest', 'telegram', 'threads', 'twitch', 'reddit', 'discord', 'bluesky', 'github',
+  'crypto', 'payment',
 ]);
 
 function isHistoryItem(value: unknown): value is HistoryItem {
