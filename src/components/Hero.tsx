@@ -164,7 +164,7 @@ export const Hero: React.FC<HeroProps> = ({ onScrollTo }) => {
 
             {/* Floating chip top-right with counter-float */}
             <div className="hidden md:flex absolute -top-3 sm:right-0 lg:-right-4 items-center gap-2 px-3.5 py-2 rounded-2xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 pointer-events-none animate-float-reverse">
-              <span className="text-emerald-500 font-bold">15+</span>
+              <span className="text-emerald-500 font-bold">25+</span>
               <span>QR Types Supported</span>
             </div>
           </div>
