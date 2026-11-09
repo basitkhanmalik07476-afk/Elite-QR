@@ -24,14 +24,19 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-x-5 gap-y-8 sm:gap-8 pb-12 border-b border-slate-200/80 dark:border-slate-800/80">
           {/* Brand & Description (5 cols) */}
           <div className="col-span-2 md:col-span-4 lg:col-span-5 sm:pr-4">
-            <div className="flex items-center gap-2.5 mb-4">
+            <button
+              type="button"
+              onClick={() => onScrollTo('hero')}
+              aria-label="Elite QR home"
+              className="inline-flex items-center gap-2.5 mb-4 rounded-lg text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950"
+            >
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
                 <QrCode className="w-5 h-5" />
               </div>
               <span className="flex items-center gap-1 text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                 Elite<span className="text-indigo-600 dark:text-indigo-400">QR</span>
               </span>
-            </div>
+            </button>
 
             <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
               Create. Customize. Connect.
