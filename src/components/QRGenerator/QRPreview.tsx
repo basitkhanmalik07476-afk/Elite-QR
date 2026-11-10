@@ -36,6 +36,7 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
   onToast,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const mockupContainerRef = useRef<HTMLDivElement>(null);
   const qrCodeRef = useRef<QRCodeStyling | null>(null);
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState<string | null>(null);
@@ -92,7 +93,7 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
       width: size,
       height: size,
       type: 'canvas',
-      data: payload || 'https://eliteqr.dev',
+      data: payload || 'https://example.com',
       image: design.logoUrl,
       margin: design.margin,
       qrOptions: {
@@ -123,17 +124,19 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
 
   // Mount & sync QR code canvas
   useEffect(() => {
-    if (!containerRef.current) return;
+    const activeContainer = viewMode === 'studio' ? containerRef.current : mockupContainerRef.current;
+    if (!activeContainer) return;
 
     if (!qrCodeRef.current) {
       const qrCode = new QRCodeStyling(getQROptions(false));
       qrCodeRef.current = qrCode;
-      containerRef.current.innerHTML = '';
-      qrCode.append(containerRef.current);
     } else {
       qrCodeRef.current.update(getQROptions(false));
     }
-  }, [payload, design]);
+
+    activeContainer.innerHTML = '';
+    qrCodeRef.current.append(activeContainer);
+  }, [payload, design, viewMode]);
 
   // Confetti trigger
   const triggerConfetti = () => {
@@ -152,115 +155,147 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
   const getSafeFileName = (extension: string) => {
     const cleanType = type.toLowerCase();
     const timestamp = Date.now().toString().slice(-6);
-    return `elite-qr-${cleanType}-${timestamp}.${extension}`;
+    return `quickqr-${cleanType}-${timestamp}.${extension}`;
   };
 
   // Render framed composite canvas for downloads when frame is enabled
   const generateFramedCanvas = async (rawQRBlob: Blob, qrDimension: number): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
+      const objectUrl = URL.createObjectURL(rawQRBlob);
+      const releaseObjectUrl = () => URL.revokeObjectURL(objectUrl);
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve(rawQRBlob);
-          return;
+        try {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (!ctx) throw new Error('Could not render the QR frame in this browser.');
+
+          const padding = Math.round(qrDimension * 0.08);
+          const frameHeight = Math.round(qrDimension * 0.22);
+
+          if (design.frame.style === 'bottom-badge') {
+            canvas.width = qrDimension + padding * 2;
+            canvas.height = qrDimension + padding * 2 + frameHeight;
+
+            // Background Card
+            ctx.fillStyle = design.backgroundColor || '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, canvas.width, canvas.height, 24);
+            ctx.fill();
+
+            // Draw QR in upper portion
+            ctx.drawImage(img, padding, padding, qrDimension, qrDimension);
+
+            // Draw Bottom Pill Badge
+            const badgeWidth = Math.round(canvas.width * 0.75);
+            const badgeHeight = Math.round(frameHeight * 0.65);
+            const badgeX = (canvas.width - badgeWidth) / 2;
+            const badgeY = qrDimension + padding + Math.round((frameHeight - badgeHeight) / 2);
+
+            ctx.fillStyle = design.frame.color || '#4f46e5';
+            ctx.beginPath();
+            ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, badgeHeight / 2);
+            ctx.fill();
+
+            // Draw Text
+            ctx.fillStyle = design.frame.textColor || '#ffffff';
+            ctx.font = `bold ${Math.round(badgeHeight * 0.42)}px Plus Jakarta Sans, Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(design.frame.text || 'SCAN ME', canvas.width / 2, badgeY + badgeHeight / 2);
+          } else if (design.frame.style === 'top-header') {
+            canvas.width = qrDimension + padding * 2;
+            canvas.height = qrDimension + padding * 2 + frameHeight;
+
+            ctx.fillStyle = design.backgroundColor || '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, canvas.width, canvas.height, 24);
+            ctx.fill();
+
+            // Draw Top Header Bar
+            ctx.fillStyle = design.frame.color || '#4f46e5';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, canvas.width, frameHeight, [24, 24, 0, 0]);
+            ctx.fill();
+
+            // Header text
+            ctx.fillStyle = design.frame.textColor || '#ffffff';
+            ctx.font = `bold ${Math.round(frameHeight * 0.38)}px Plus Jakarta Sans, Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(design.frame.text || 'SCAN FOR MENU', canvas.width / 2, frameHeight / 2);
+
+            // Draw QR underneath
+            ctx.drawImage(img, padding, frameHeight + padding, qrDimension, qrDimension);
+          } else if (design.frame.style === 'minimal-card') {
+            canvas.width = qrDimension + padding * 2;
+            canvas.height = qrDimension + padding * 2 + Math.round(frameHeight * 0.7);
+
+            ctx.fillStyle = design.backgroundColor || '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, canvas.width, canvas.height, 24);
+            ctx.fill();
+
+            // Border outline
+            ctx.strokeStyle = design.frame.color || '#4f46e5';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.roundRect(3, 3, canvas.width - 6, canvas.height - 6, 22);
+            ctx.stroke();
+
+            ctx.drawImage(img, padding, padding, qrDimension, qrDimension);
+
+            // Label
+            ctx.fillStyle = design.frame.color || '#4f46e5';
+            ctx.font = `bold ${Math.round(frameHeight * 0.32)}px Plus Jakarta Sans, Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(design.frame.text || 'SCAN ME', canvas.width / 2, qrDimension + padding + frameHeight * 0.35);
+          } else if (design.frame.style === 'ticket') {
+            const ticketHeight = Math.round(frameHeight * 0.7);
+            canvas.width = qrDimension + padding * 2;
+            canvas.height = qrDimension + padding * 2 + ticketHeight;
+
+            ctx.fillStyle = design.backgroundColor || '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, padding, padding, qrDimension, qrDimension);
+
+            const dividerY = qrDimension + padding + Math.round(ticketHeight * 0.12);
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = Math.max(2, Math.round(qrDimension * 0.002));
+            ctx.setLineDash([Math.round(qrDimension * 0.015), Math.round(qrDimension * 0.01)]);
+            ctx.beginPath();
+            ctx.moveTo(padding, dividerY);
+            ctx.lineTo(canvas.width - padding, dividerY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = design.frame.color || '#4f46e5';
+            ctx.font = `bold ${Math.round(frameHeight * 0.28)}px Plus Jakarta Sans, Arial, sans-serif`;
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'left';
+            ctx.fillText(design.frame.text || 'TICKET SCAN', padding, dividerY + Math.round(ticketHeight * 0.4));
+            ctx.textAlign = 'right';
+            ctx.fillText('● ● ●', canvas.width - padding, dividerY + Math.round(ticketHeight * 0.4));
+          } else {
+            throw new Error('Unsupported QR frame style.');
+          }
+
+          canvas.toBlob((blob) => {
+            releaseObjectUrl();
+            if (blob) resolve(blob);
+            else reject(new Error('Could not encode the framed QR image.'));
+          }, 'image/png');
+        } catch (err) {
+          releaseObjectUrl();
+          reject(err);
         }
-
-        const padding = Math.round(qrDimension * 0.08);
-        const frameHeight = Math.round(qrDimension * 0.22);
-
-        if (design.frame.style === 'bottom-badge') {
-          canvas.width = qrDimension + padding * 2;
-          canvas.height = qrDimension + padding * 2 + frameHeight;
-
-          // Background Card
-          ctx.fillStyle = design.backgroundColor || '#ffffff';
-          ctx.beginPath();
-          ctx.roundRect(0, 0, canvas.width, canvas.height, 24);
-          ctx.fill();
-
-          // Draw QR in upper portion
-          ctx.drawImage(img, padding, padding, qrDimension, qrDimension);
-
-          // Draw Bottom Pill Badge
-          const badgeWidth = Math.round(canvas.width * 0.75);
-          const badgeHeight = Math.round(frameHeight * 0.65);
-          const badgeX = (canvas.width - badgeWidth) / 2;
-          const badgeY = qrDimension + padding + Math.round((frameHeight - badgeHeight) / 2);
-
-          ctx.fillStyle = design.frame.color || '#4f46e5';
-          ctx.beginPath();
-          ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, badgeHeight / 2);
-          ctx.fill();
-
-          // Draw Text
-          ctx.fillStyle = design.frame.textColor || '#ffffff';
-          ctx.font = `bold ${Math.round(badgeHeight * 0.42)}px Plus Jakarta Sans, Arial, sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(design.frame.text || 'SCAN ME', canvas.width / 2, badgeY + badgeHeight / 2);
-        } else if (design.frame.style === 'top-header') {
-          canvas.width = qrDimension + padding * 2;
-          canvas.height = qrDimension + padding * 2 + frameHeight;
-
-          ctx.fillStyle = design.backgroundColor || '#ffffff';
-          ctx.beginPath();
-          ctx.roundRect(0, 0, canvas.width, canvas.height, 24);
-          ctx.fill();
-
-          // Draw Top Header Bar
-          ctx.fillStyle = design.frame.color || '#4f46e5';
-          ctx.beginPath();
-          ctx.roundRect(0, 0, canvas.width, frameHeight, [24, 24, 0, 0]);
-          ctx.fill();
-
-          // Header text
-          ctx.fillStyle = design.frame.textColor || '#ffffff';
-          ctx.font = `bold ${Math.round(frameHeight * 0.38)}px Plus Jakarta Sans, Arial, sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(design.frame.text || 'SCAN FOR MENU', canvas.width / 2, frameHeight / 2);
-
-          // Draw QR underneath
-          ctx.drawImage(img, padding, frameHeight + padding, qrDimension, qrDimension);
-        } else if (design.frame.style === 'minimal-card') {
-          canvas.width = qrDimension + padding * 2;
-          canvas.height = qrDimension + padding * 2 + Math.round(frameHeight * 0.7);
-
-          ctx.fillStyle = design.backgroundColor || '#ffffff';
-          ctx.beginPath();
-          ctx.roundRect(0, 0, canvas.width, canvas.height, 24);
-          ctx.fill();
-
-          // Border outline
-          ctx.strokeStyle = design.frame.color || '#4f46e5';
-          ctx.lineWidth = 6;
-          ctx.beginPath();
-          ctx.roundRect(3, 3, canvas.width - 6, canvas.height - 6, 22);
-          ctx.stroke();
-
-          ctx.drawImage(img, padding, padding, qrDimension, qrDimension);
-
-          // Label
-          ctx.fillStyle = design.frame.color || '#4f46e5';
-          ctx.font = `bold ${Math.round(frameHeight * 0.32)}px Plus Jakarta Sans, Arial, sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(design.frame.text || 'SCAN ME', canvas.width / 2, qrDimension + padding + frameHeight * 0.35);
-        } else {
-          // Pure
-          resolve(rawQRBlob);
-          return;
-        }
-
-        canvas.toBlob((blob) => {
-          if (blob) resolve(blob);
-          else resolve(rawQRBlob);
-        }, 'image/png');
       };
-      img.onerror = () => resolve(rawQRBlob);
-      img.src = URL.createObjectURL(rawQRBlob);
+      img.onerror = () => {
+        releaseObjectUrl();
+        reject(new Error('Could not load QR image for framing.'));
+      };
+      img.src = objectUrl;
     });
   };
 
@@ -268,6 +303,18 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
     if (data instanceof Blob) return data;
     return new Blob([data], { type: 'image/png' });
   };
+
+  const blobToDataUrl = (blob: Blob): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') resolve(reader.result);
+        else reject(new Error('Could not read the generated image.'));
+      };
+      reader.onerror = () => reject(reader.error ?? new Error('Could not read the generated image.'));
+      reader.onabort = () => reject(new Error('Reading the generated image was aborted.'));
+      reader.readAsDataURL(blob);
+    });
 
   // Download Handlers
   const handleDownload = async (ext: 'png' | 'svg' | 'jpeg') => {
@@ -277,7 +324,7 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
 
       if (design.frame.style === 'none' || ext === 'svg') {
         // Pure SVG or unframed
-        const filename = `elite-qr-${type}-${Date.now().toString().slice(-6)}`;
+        const filename = `quickqr-${type}-${Date.now().toString().slice(-6)}`;
         await exportQR.download({ name: filename, extension: ext });
       } else {
         // Framed Raster Download
@@ -293,11 +340,15 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
 
       triggerConfetti();
-      onToast('success', `Exported ${ext.toUpperCase()} successfully (${design.size}x${design.size}px)!`);
+      const frameNote =
+        ext === 'svg' && design.frame.style !== 'none'
+          ? ' SVG includes the QR only; use PNG, JPEG, or PDF to include the selected frame.'
+          : '';
+      onToast('success', `Exported ${ext.toUpperCase()} successfully (${design.size}x${design.size}px)!${frameNote}`);
     } catch (err) {
       console.error('Download error:', err);
       onToast('error', `Failed to download ${ext.toUpperCase()}. Please try again.`);
@@ -310,74 +361,83 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
     setDownloading('pdf');
     try {
       const { jsPDF } = await import('jspdf');
-      const exportQR = new QRCodeStyling(getQROptions(true, 1000));
+      const exportSize = 1000;
+      const exportQR = new QRCodeStyling(getQROptions(true, exportSize));
       const rawData = await exportQR.getRawData('png');
       if (!rawData) throw new Error('Could not generate image data');
       const rawBlob = toBlob(rawData);
 
       const finalBlob = design.frame.style !== 'none' ? await generateFramedCanvas(rawBlob, 1000) : rawBlob;
+      const dataUrl = await blobToDataUrl(finalBlob);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = reader.result as string;
-        const pdf = new jsPDF({
-          orientation: 'portrait',
-          unit: 'mm',
-          format: 'a4',
-        });
+      // Top accent line
+      pdf.setFillColor(79, 70, 229);
+      pdf.rect(0, 0, 210, 8, 'F');
 
-        // Top accent line
-        pdf.setFillColor(79, 70, 229);
-        pdf.rect(0, 0, 210, 8, 'F');
+      // Header Title
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(22);
+      pdf.setTextColor(15, 23, 42);
+      pdf.text('QuickQR Code Print Document', 105, 30, { align: 'center' });
 
-        // Header Title
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(22);
-        pdf.setTextColor(15, 23, 42);
-        pdf.text('Elite QR Code Print Document', 105, 30, { align: 'center' });
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 116, 139);
+      const dateStr = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      pdf.text(`Generated on ${dateStr} · Type: ${type.toUpperCase()}`, 105, 37, { align: 'center' });
 
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(10);
-        pdf.setTextColor(100, 116, 139);
-        const dateStr = new Date().toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        });
-        pdf.text(`Generated on ${dateStr} · Type: ${type.toUpperCase()}`, 105, 37, { align: 'center' });
+      // Centered QR Code
+      const maxImageSize = 125;
+      const padding = Math.round(exportSize * 0.08);
+      const frameHeight = Math.round(exportSize * 0.22);
+      const imageWidthPx = design.frame.style === 'none' ? exportSize : exportSize + padding * 2;
+      const imageHeightPx =
+        design.frame.style === 'none'
+          ? exportSize
+          : imageWidthPx + Math.round(
+              design.frame.style === 'bottom-badge' || design.frame.style === 'top-header'
+                ? frameHeight
+                : frameHeight * 0.7
+            );
+      const imageRatio = imageHeightPx / imageWidthPx;
+      const imageWidth = Math.min(maxImageSize, maxImageSize / imageRatio);
+      const imageHeight = imageWidth * imageRatio;
+      pdf.addImage(dataUrl, 'PNG', (210 - imageWidth) / 2, 48, imageWidth, imageHeight);
 
-        // Centered QR Code
-        const qrSize = 125;
-        const qrX = (210 - qrSize) / 2;
-        pdf.addImage(dataUrl, 'PNG', qrX, 48, qrSize, qrSize);
+      // Content description box
+      pdf.setFillColor(248, 250, 252);
+      pdf.roundedRect(30, 185, 150, 28, 3, 3, 'F');
+      pdf.setDrawColor(226, 232, 240);
+      pdf.roundedRect(30, 185, 150, 28, 3, 3, 'S');
 
-        // Content description box
-        pdf.setFillColor(248, 250, 252);
-        pdf.roundedRect(30, 185, 150, 28, 3, 3, 'F');
-        pdf.setDrawColor(226, 232, 240);
-        pdf.roundedRect(30, 185, 150, 28, 3, 3, 'S');
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.setTextColor(30, 41, 59);
+      pdf.text(`Target: ${displayTitle.length > 55 ? displayTitle.slice(0, 52) + '...' : displayTitle}`, 35, 195);
 
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(10);
-        pdf.setTextColor(30, 41, 59);
-        pdf.text(`Target: ${displayTitle.length > 55 ? displayTitle.slice(0, 52) + '...' : displayTitle}`, 35, 195);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(100, 116, 139);
+      const displayPayload = payload.length > 80 ? payload.slice(0, 77) + '...' : payload;
+      pdf.text(`Payload: ${displayPayload}`, 35, 203);
 
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(8.5);
-        pdf.setTextColor(100, 116, 139);
-        const displayPayload = payload.length > 80 ? payload.slice(0, 77) + '...' : payload;
-        pdf.text(`Payload: ${displayPayload}`, 35, 203);
+      // Footer instructions
+      pdf.setFontSize(9);
+      pdf.setTextColor(148, 163, 184);
+      pdf.text('Generated in your browser · Test contrast before printing', 105, 230, { align: 'center' });
 
-        // Footer instructions
-        pdf.setFontSize(9);
-        pdf.setTextColor(148, 163, 184);
-        pdf.text('Generated in your browser · Test contrast before printing', 105, 230, { align: 'center' });
-
-        pdf.save(getSafeFileName('pdf'));
-        triggerConfetti();
-        onToast('success', 'Generated print-ready PDF document successfully!');
-      };
-      reader.readAsDataURL(finalBlob);
+      pdf.save(getSafeFileName('pdf'));
+      triggerConfetti();
+      onToast('success', 'Generated print-ready PDF document successfully!');
     } catch (err) {
       console.error('PDF generation error:', err);
       onToast('error', 'Failed to generate PDF. Please try again.');
@@ -421,15 +481,7 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
         const rawData = await qrCodeRef.current.getRawData('png');
         if (rawData) {
           const blob = toBlob(rawData);
-          previewUrl = await new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              if (typeof reader.result === 'string') resolve(reader.result);
-              else reject(new Error('Could not read QR preview image.'));
-            };
-            reader.onerror = () => reject(reader.error ?? new Error('Could not read QR preview image.'));
-            reader.readAsDataURL(blob);
-          });
+          previewUrl = await blobToDataUrl(blob);
         }
       } catch (err) {
         console.warn('Could not create QR history preview', err);
@@ -461,7 +513,7 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
             onClick={() => setViewMode('studio')}
             className={`px-2 py-1 rounded-md transition-all cursor-pointer ${
               viewMode === 'studio'
-                ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 font-bold shadow-sm'
+                ? 'bg-white dark:bg-slate-900 text-[#1d7a5d] dark:text-[#93d3b1] font-bold shadow-sm'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -472,7 +524,7 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
             onClick={() => setViewMode('card-mockup')}
             className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all cursor-pointer ${
               viewMode === 'card-mockup'
-                ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 font-bold shadow-sm'
+                ? 'bg-white dark:bg-slate-900 text-[#1d7a5d] dark:text-[#93d3b1] font-bold shadow-sm'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -484,7 +536,7 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
             onClick={() => setViewMode('stand-mockup')}
             className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all cursor-pointer ${
               viewMode === 'stand-mockup'
-                ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 font-bold shadow-sm'
+                ? 'bg-white dark:bg-slate-900 text-[#1d7a5d] dark:text-[#93d3b1] font-bold shadow-sm'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -576,16 +628,10 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
           </div>
 
           <div className="w-24 h-24 bg-white p-1.5 rounded-xl shadow-md shrink-0 flex items-center justify-center">
-            <svg className="w-full h-full text-slate-900" viewBox="0 0 100 100" fill="currentColor">
-              <rect x="5" y="5" width="28" height="28" rx="6" />
-              <rect x="67" y="5" width="28" height="28" rx="6" />
-              <rect x="5" y="67" width="28" height="28" rx="6" />
-              <circle cx="50" cy="50" r="8" fill="#4f46e5" />
-              <circle cx="40" cy="20" r="4" />
-              <circle cx="20" cy="40" r="4" />
-              <circle cx="80" cy="50" r="4" />
-              <circle cx="50" cy="80" r="4" />
-            </svg>
+            <div
+              ref={mockupContainerRef}
+              className="flex h-full w-full items-center justify-center [&>canvas]:!h-full [&>canvas]:!w-full [&>canvas]:max-w-full [&>canvas]:rounded-md"
+            />
           </div>
         </div>
       )}
@@ -600,16 +646,10 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
           <div className="text-[10px] text-slate-500 mb-3">Scan camera for contactless digital menu</div>
 
           <div className="w-28 h-28 bg-white p-2 rounded-xl border border-slate-200 shadow-inner flex items-center justify-center">
-            <svg className="w-full h-full text-indigo-600" viewBox="0 0 100 100" fill="currentColor">
-              <rect x="5" y="5" width="28" height="28" rx="6" />
-              <rect x="67" y="5" width="28" height="28" rx="6" />
-              <rect x="5" y="67" width="28" height="28" rx="6" />
-              <circle cx="50" cy="50" r="8" fill="#06b6d4" />
-              <circle cx="45" cy="20" r="4" />
-              <circle cx="20" cy="45" r="4" />
-              <circle cx="80" cy="45" r="4" />
-              <circle cx="45" cy="80" r="4" />
-            </svg>
+            <div
+              ref={mockupContainerRef}
+              className="flex h-full w-full items-center justify-center [&>canvas]:!h-full [&>canvas]:!w-full [&>canvas]:max-w-full [&>canvas]:rounded-md"
+            />
           </div>
 
           <div className="mt-4 px-3 py-1 rounded-full bg-indigo-600 text-white text-[10px] font-bold">
@@ -662,9 +702,9 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
         <button
           type="button"
           onClick={handleSaveToHistory}
-          className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-indigo-200 dark:border-indigo-900/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-xs font-semibold text-indigo-700 dark:text-indigo-300 transition-colors cursor-pointer min-h-[44px]"
+          className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-[#1d7a5d]/30 dark:border-[#1d7a5d]/50 hover:bg-[#1d7a5d]/5 dark:hover:bg-[#1d7a5d]/10 text-xs font-semibold text-[#1d7a5d] dark:text-[#93d3b1] transition-colors cursor-pointer min-h-[44px]"
         >
-          <BookmarkPlus className="w-4 h-4 text-indigo-500 shrink-0" />
+          <BookmarkPlus className="w-4 h-4 text-[#1d7a5d] shrink-0" />
           <span className="truncate">Save History</span>
         </button>
       </div>
@@ -684,7 +724,7 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
             type="button"
             onClick={() => handleDownload('png')}
             disabled={downloading !== null}
-            className="group relative overflow-hidden flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 min-h-[44px]"
+            className="group relative overflow-hidden flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl text-xs font-bold text-white bg-[#1d7a5d] hover:bg-[#115a49] shadow-[0_12px_24px_rgba(29,122,93,0.18)] transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 min-h-[44px]"
           >
             <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
             <Download className="w-4 h-4 shrink-0" />

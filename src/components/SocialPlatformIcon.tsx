@@ -46,7 +46,7 @@ export const SocialPlatformIcon: React.FC<SocialPlatformIconProps> = ({ platform
   <svg
     aria-hidden="true"
     className={className}
-    viewBox="0 0 24 24"
+    viewBox={platform === 'bluesky' ? '0 0 24 27' : '0 0 24 24'}
     xmlns="http://www.w3.org/2000/svg"
     style={{ color: BACKGROUNDS[platform], '--social-icon-bg': '#ffffff' } as React.CSSProperties}
   >

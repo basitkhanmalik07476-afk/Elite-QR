@@ -67,7 +67,7 @@ export const QRHistory: React.FC<QRHistoryProps> = ({
     }
     const link = document.createElement('a');
     link.href = item.previewDataUrl;
-    link.download = `elite-qr-${item.type}-${item.id}.png`;
+    link.download = `quickqr-${item.type}-${item.id}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -75,18 +75,12 @@ export const QRHistory: React.FC<QRHistoryProps> = ({
   };
 
   return (
-    <section id="history" className="py-16 md:py-24 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="history" aria-labelledby="history-heading" className="py-16 md:py-24 relative">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
-              <History className="w-4 h-4" />
-              <span>Session History</span>
-              <span aria-hidden="true">·</span>
-              <span>100% Stored Locally</span>
-            </div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            <h2 id="history-heading" className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               Recently Generated QR Codes
             </h2>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
@@ -173,7 +167,7 @@ export const QRHistory: React.FC<QRHistoryProps> = ({
                       type="button"
                       onClick={() => onLoadItem(item)}
                       title="Load into Generator"
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors cursor-pointer min-h-[38px]"
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#1d7a5d] dark:text-[#93d3b1] hover:bg-[#1d7a5d]/5 dark:hover:bg-[#1d7a5d]/10 transition-colors cursor-pointer min-h-[38px]"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>Edit</span>
@@ -197,7 +191,7 @@ export const QRHistory: React.FC<QRHistoryProps> = ({
                         type="button"
                         onClick={() => handleDownloadCached(item)}
                         title="Download"
-                        className="p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
+                        className="p-2 rounded-xl text-slate-500 hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
                       >
                         <Download className="w-4 h-4" />
                       </button>

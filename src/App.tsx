@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { QRGenerator } from './components/QRGenerator';
@@ -14,51 +14,63 @@ import { Footer } from './components/Footer';
 import { ToastContainer } from './components/Toast';
 import { ToastMessage, HistoryItem, QRFormState, QRType } from './types';
 import { generatePayload, getFormStateFromPayload, initialFormState } from './utils/qrPayloads';
-import { getHistory, getInitialTheme, setSavedTheme, defaultDesignConfig } from './utils/qrStorage';
+import { getHistory, setSavedTheme, defaultDesignConfig } from './utils/qrStorage';
 import { getSocialTypeFromUrl } from './utils/socialPlatforms';
 
+const navigationSections = ['generator', 'scanner', 'features', 'how-it-works', 'use-cases', 'faq'];
+
 export default function App() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme());
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [loadedHistoryItem, setLoadedHistoryItem] = useState<HistoryItem | null>(null);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('generator');
 
-  // Sync initial theme
   useEffect(() => {
-    setSavedTheme(theme);
+    setSavedTheme('light');
     setHistory(getHistory());
-  }, []);
 
-  const handleToggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    setSavedTheme(next);
-  };
+    if (window.location.pathname !== '/') {
+      window.history.replaceState(null, '', '/');
+    }
+
+    const handleScroll = () => {
+      let active = 'generator';
+      const scrollPosition = window.scrollY + 120;
+
+      for (const id of navigationSections) {
+        const section = document.getElementById(id);
+        if (section && scrollPosition >= section.offsetTop) {
+          active = id;
+        }
+      }
+
+      setActiveSection(active);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const addToast = (type: 'success' | 'error' | 'info', message: string) => {
     const id = `toast_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
     setToasts((prev) => [...prev, { id, type, message }]);
     setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, 4500);
   };
 
   const dismissToast = (id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
 
   const handleScrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      const topOffset = 80;
-      const elementPosition = el.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - topOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
+    const section = document.getElementById(id);
+    if (!section) return;
+
+    const top = section.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top, behavior: 'smooth' });
   };
 
   const handleHistoryUpdated = () => {
@@ -87,64 +99,53 @@ export default function App() {
     addToast('success', `Loaded ${type.toUpperCase()} template into Generator!`);
   };
 
+  const handleUseScannedPayload = (payload: string) => {
+    const socialType = getSocialTypeFromUrl(payload);
+    const type: QRType = /^PAYMENT DETAILS \(PAKISTAN\)/i.test(payload)
+      ? 'payment'
+      : socialType
+        ? socialType
+        : /^https?:\/\//i.test(payload)
+          ? 'url'
+          : 'text';
+    const formState = {
+      ...initialFormState,
+      ...(type === 'url'
+        ? { url: payload }
+        : type === 'payment' || socialType
+          ? getFormStateFromPayload(type, payload)
+          : { text: payload }),
+    };
+    setLoadedHistoryItem({
+      id: `scan_${Date.now()}`,
+      title: 'Scanned content',
+      type,
+      payload,
+      createdAt: Date.now(),
+      design: { ...defaultDesignConfig },
+      formState,
+    });
+    handleScrollTo('generator');
+    addToast('info', 'Loaded scanned content into generator.');
+  };
+
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
-      {/* Toast Notifications */}
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f5f1ea] text-[#1d1a17] flex flex-col font-sans">
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
-      {/* Top Navbar */}
-      <Navbar
-        theme={theme}
-        onToggleTheme={handleToggleTheme}
-        onNavigateTo={handleScrollTo}
-      />
+      <Navbar onNavigateTo={handleScrollTo} activeSection={activeSection} />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <Hero onScrollTo={handleScrollTo} />
+        <Hero onNavigateTo={handleScrollTo} />
 
-        {/* QR Code Generator (Core Feature) */}
         <QRGenerator
           onToast={addToast}
           onHistoryUpdated={handleHistoryUpdated}
           loadedHistoryItem={loadedHistoryItem}
         />
 
-        {/* QR Code Scanner (Camera & File Decoding) */}
-        <QRScanner
-          onToast={addToast}
-          onUseInGenerator={(payload) => {
-            const socialType = getSocialTypeFromUrl(payload);
-            const type: QRType = /^PAYMENT DETAILS \(PAKISTAN\)/i.test(payload)
-              ? 'payment'
-              : socialType
-                ? socialType
-                : /^https?:\/\//i.test(payload)
-                  ? 'url'
-                  : 'text';
-            const formState = {
-              ...initialFormState,
-              ...(type === 'url'
-                ? { url: payload }
-                : type === 'payment' || socialType
-                  ? getFormStateFromPayload(type, payload)
-                  : { text: payload }),
-            };
-            setLoadedHistoryItem({
-              id: `scan_${Date.now()}`,
-              title: 'Scanned content',
-              type,
-              payload,
-              createdAt: Date.now(),
-              design: { ...defaultDesignConfig },
-              formState,
-            });
-            handleScrollTo('generator');
-            addToast('info', 'Loaded scanned content into generator.');
-          }}
-        />
+        <QRScanner onToast={addToast} onUseInGenerator={handleUseScannedPayload} />
 
-        {/* Recent QR History */}
         <QRHistory
           history={history}
           onHistoryChange={handleHistoryUpdated}
@@ -152,36 +153,20 @@ export default function App() {
           onToast={addToast}
         />
 
-        {/* Features Bento Grid */}
         <Features />
-
-        {/* How It Works (3 Steps) */}
-        <HowItWorks onScrollTo={handleScrollTo} />
-
-        {/* Use Cases Section */}
+        <HowItWorks onNavigateTo={handleScrollTo} />
         <UseCases onSelectUseCaseTemplate={handleSelectUseCaseTemplate} />
-
-        {/* Frequently Asked Questions */}
         <FAQ />
-
-        {/* Contact / Inquiries Section */}
         <ContactSection onToast={addToast} />
       </main>
 
-      {/* Footer */}
       <Footer
-        onScrollTo={handleScrollTo}
-        onSelectType={(type) => {
-          handleSelectUseCaseTemplate(type, {});
-        }}
+        onNavigateTo={handleScrollTo}
+        onSelectType={(type) => handleSelectUseCaseTemplate(type, {})}
         onOpenPrivacy={() => setPrivacyModalOpen(true)}
       />
 
-      {/* Privacy Policy & Terms Modal */}
-      <PrivacyModal
-        isOpen={privacyModalOpen}
-        onClose={() => setPrivacyModalOpen(false)}
-      />
+      <PrivacyModal isOpen={privacyModalOpen} onClose={() => setPrivacyModalOpen(false)} />
     </div>
   );
 }

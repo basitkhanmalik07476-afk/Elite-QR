@@ -2,10 +2,10 @@ import React from 'react';
 import { MousePointerClick, SlidersHorizontal, DownloadCloud, ArrowRight } from 'lucide-react';
 
 interface HowItWorksProps {
-  onScrollTo: (id: string) => void;
+  onNavigateTo: (id: string) => void;
 }
 
-export const HowItWorks: React.FC<HowItWorksProps> = ({ onScrollTo }) => {
+export const HowItWorks: React.FC<HowItWorksProps> = ({ onNavigateTo }) => {
   const steps = [
     {
       number: '01',
@@ -31,51 +31,49 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onScrollTo }) => {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 md:py-28 bg-slate-100/50 dark:bg-slate-900/30 border-y border-slate-200/80 dark:border-slate-800/80 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+    <section id="how-it-works" aria-labelledby="how-it-works-heading" className="py-20 md:py-28 bg-[#f2eee8] dark:bg-[#0d1519] border-y border-[#e6ddd1] dark:border-[#1a2c31] relative">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
-            <span>Simple 3-Step Workflow</span>
+          <div className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[#1d7a5d] dark:text-[#93d3b1] mb-2">
+            <span>Simple 3-step workflow</span>
             <span aria-hidden="true">·</span>
-            <span>Zero Sign-up Required</span>
+            <span>Zero sign-up required</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            How Elite QR Works
+          <h2 id="how-it-works-heading" className="text-3xl sm:text-4xl font-extrabold tracking-[-0.05em] text-[#1d1a17] dark:text-white">
+            How QuickQR works
           </h2>
-          <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
-            Produce print-ready, scannable QR codes ready for commercial production in under thirty seconds.
+          <p className="mt-3 text-base text-[#5b534d] dark:text-[#cfd7d3]">
+            Produce scannable, production-ready QR assets in a few deliberate steps.
           </p>
         </div>
 
-        {/* Steps Grid */}
         <div className="grid md:grid-cols-3 gap-8 relative">
           {steps.map((step, idx) => {
             const Icon = step.icon;
             return (
               <div
                 key={idx}
-                className="relative bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800/90 shadow-sm flex flex-col justify-between group hover:border-indigo-500/40 transition-all duration-300"
+                className="relative bg-[#fffdf9] dark:bg-[#111b21] rounded-[28px] p-6 sm:p-8 border border-[#eae0d4] dark:border-[#21363d] shadow-[0_18px_40px_rgba(17,24,39,0.04)] flex flex-col justify-between group hover:border-[#b9d9ca] transition-all duration-300"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+                    <div className="w-12 h-12 rounded-2xl bg-[#edf7f3] dark:bg-[#192d2b] text-[#1d7a5d] dark:text-[#93d3b1] flex items-center justify-center font-bold">
                       <Icon className="w-6 h-6" />
                     </div>
-                    <span className="text-2xl font-black text-slate-200 dark:text-slate-800 font-mono">
+                    <span className="text-2xl font-black text-[#e9e2d7] dark:text-[#1b2d33] font-mono">
                       {step.number}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2.5">
+                  <h3 className="text-lg font-bold text-[#1d1a17] dark:text-white mb-2.5">
                     {step.title}
                   </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <p className="text-sm text-[#5b534d] dark:text-[#c4d0cd] leading-relaxed">
                     {step.description}
                   </p>
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800 flex items-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform">
+                <div className="pt-6 mt-6 border-t border-[#efe5dc] dark:border-[#21363d] flex items-center text-xs font-semibold text-[#1d7a5d] dark:text-[#93d3b1] group-hover:translate-x-1 transition-transform">
                   <span>Step {idx + 1} of 3</span>
                   <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </div>
@@ -84,13 +82,12 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onScrollTo }) => {
           })}
         </div>
 
-        {/* Bottom CTA to start */}
         <div className="mt-12 text-center">
           <button
-            onClick={() => onScrollTo('generator')}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] w-full sm:w-auto rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 shadow-md shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer text-sm"
+            onClick={() => onNavigateTo('generator')}
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] w-full sm:w-auto rounded-xl font-bold text-white bg-[#1d7a5d] shadow-[0_16px_28px_rgba(29,122,93,0.18)] hover:bg-[#115a49] hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer text-sm"
           >
-            <span>Start Building Your QR Code</span>
+            <span>Start building your QR code</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

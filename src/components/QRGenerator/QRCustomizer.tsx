@@ -154,7 +154,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
           onClick={() => setActiveTab('templates')}
           className={`flex items-center justify-center gap-1.5 py-2 px-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[40px] ${
             activeTab === 'templates'
-              ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+              ? 'bg-white dark:bg-slate-900 text-[#1d7a5d] dark:text-[#93d3b1] shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
@@ -167,7 +167,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
           onClick={() => setActiveTab('colors')}
           className={`flex items-center justify-center gap-1.5 py-2 px-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[40px] ${
             activeTab === 'colors'
-              ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+              ? 'bg-white dark:bg-slate-900 text-[#1d7a5d] dark:text-[#93d3b1] shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
@@ -180,7 +180,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
           onClick={() => setActiveTab('shapes')}
           className={`flex items-center justify-center gap-1.5 py-2 px-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[40px] ${
             activeTab === 'shapes'
-              ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+              ? 'bg-white dark:bg-slate-900 text-[#1d7a5d] dark:text-[#93d3b1] shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
@@ -193,7 +193,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
           onClick={() => setActiveTab('frames')}
           className={`flex items-center justify-center gap-1.5 py-2 px-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[40px] ${
             activeTab === 'frames'
-              ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+              ? 'bg-white dark:bg-slate-900 text-[#1d7a5d] dark:text-[#93d3b1] shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
@@ -206,7 +206,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
           onClick={() => setActiveTab('logo')}
           className={`flex items-center justify-center gap-1.5 py-2 px-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[40px] ${
             activeTab === 'logo'
-              ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+              ? 'bg-white dark:bg-slate-900 text-[#1d7a5d] dark:text-[#93d3b1] shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
@@ -219,7 +219,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
           onClick={() => setActiveTab('advanced')}
           className={`flex items-center justify-center gap-1.5 py-2 px-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[40px] ${
             activeTab === 'advanced'
-              ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+              ? 'bg-white dark:bg-slate-900 text-[#1d7a5d] dark:text-[#93d3b1] shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
@@ -248,11 +248,11 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                   key={preset.id}
                   type="button"
                   onClick={() => handleApplyProfessionalStyle(preset)}
-                  className="group relative p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-indigo-500/60 dark:hover:border-indigo-400 text-left transition-all duration-200 hover:shadow-md cursor-pointer bg-slate-50/70 dark:bg-slate-800/40 flex flex-col justify-between"
+                  className="group relative p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-[#1d7a5d]/60 dark:hover:border-[#93d3b1] text-left transition-all duration-200 hover:shadow-md cursor-pointer bg-slate-50/70 dark:bg-slate-800/40 flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                      <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#1d7a5d] dark:group-hover:text-[#93d3b1] transition-colors">
                         {preset.name}
                       </span>
                       <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
@@ -277,7 +277,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                     <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300">
                       Module: <span className="font-mono text-indigo-600 dark:text-indigo-400">{preset.config.dotsType}</span>
                     </span>
-                    <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold ml-auto group-hover:translate-x-0.5 transition-transform">
+                    <span className="text-[10px] text-[#1d7a5d] dark:text-[#93d3b1] font-semibold ml-auto group-hover:translate-x-0.5 transition-transform">
                       Apply →
                     </span>
                   </div>
@@ -302,7 +302,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                   key={preset.name}
                   type="button"
                   onClick={() => handleApplyPreset(preset)}
-                  className="flex items-center gap-2 p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-indigo-400 text-left transition-all group cursor-pointer bg-slate-50 dark:bg-slate-800/40"
+                  className="flex items-center gap-2 p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-[#1d7a5d]/60 text-left transition-all group cursor-pointer bg-slate-50 dark:bg-slate-800/40"
                 >
                   <div
                     className="w-5 h-5 rounded-md shadow-sm shrink-0 border border-black/10"
@@ -409,7 +409,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                       }
                       className={`px-3 py-1 rounded-lg text-xs font-medium cursor-pointer ${
                         design.gradient.type === 'linear'
-                          ? 'bg-indigo-600 text-white shadow-sm'
+                          ? 'bg-[#1d7a5d] text-white shadow-sm'
                           : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
                       }`}
                     >
@@ -424,7 +424,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                       }
                       className={`px-3 py-1 rounded-lg text-xs font-medium cursor-pointer ${
                         design.gradient.type === 'radial'
-                          ? 'bg-indigo-600 text-white shadow-sm'
+                          ? 'bg-[#1d7a5d] text-white shadow-sm'
                           : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
                       }`}
                     >
@@ -512,7 +512,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                     onClick={() => onChange({ dotsType: item.type })}
                     className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between min-h-[74px] ${
                       isSelected
-                        ? 'bg-indigo-50/90 dark:bg-indigo-950/70 border-indigo-500 text-indigo-700 dark:text-indigo-300 shadow-sm ring-1 ring-indigo-500/30'
+                        ? 'bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/15 border-[#1d7a5d] text-[#1d7a5d] dark:text-[#93d3b1] shadow-sm ring-1 ring-[#1d7a5d]/30'
                         : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40'
                     }`}
                   >
@@ -568,7 +568,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                           </>
                         )}
                       </svg>
-                      {isSelected && <Check className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />}
+                      {isSelected && <Check className="w-3.5 h-3.5 text-[#1d7a5d] dark:text-[#93d3b1]" />}
                     </div>
                     <div>
                       <div className="text-xs font-bold truncate">{item.label}</div>
@@ -595,7 +595,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                     onClick={() => onChange({ cornersSquareType: item.type })}
                     className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
                       isSelected
-                        ? 'bg-indigo-50/90 dark:bg-indigo-950/70 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-semibold shadow-sm ring-1 ring-indigo-500/30'
+                        ? 'bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/15 border-[#1d7a5d] text-[#1d7a5d] dark:text-[#93d3b1] font-semibold shadow-sm ring-1 ring-[#1d7a5d]/30'
                         : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40'
                     }`}
                   >
@@ -632,7 +632,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                     onClick={() => onChange({ cornersDotType: item.type })}
                     className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
                       isSelected
-                        ? 'bg-indigo-50/90 dark:bg-indigo-950/70 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-semibold shadow-sm ring-1 ring-indigo-500/30'
+                        ? 'bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/15 border-[#1d7a5d] text-[#1d7a5d] dark:text-[#93d3b1] font-semibold shadow-sm ring-1 ring-[#1d7a5d]/30'
                         : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40'
                     }`}
                   >
@@ -713,13 +713,13 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                     }
                     className={`p-3 rounded-2xl border text-left transition-all cursor-pointer min-h-[72px] flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-indigo-50/90 dark:bg-indigo-950/70 border-indigo-500 text-indigo-700 dark:text-indigo-300 shadow-sm ring-1 ring-indigo-500/30'
+                        ? 'bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/15 border-[#1d7a5d] text-[#1d7a5d] dark:text-[#93d3b1] shadow-sm ring-1 ring-[#1d7a5d]/30'
                         : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40'
                     }`}
                   >
                     <div className="flex items-center justify-between w-full">
                       <span className="text-xs font-bold">{opt.label}</span>
-                      {isSelected && <Check className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />}
+                      {isSelected && <Check className="w-3.5 h-3.5 text-[#1d7a5d] dark:text-[#93d3b1]" />}
                     </div>
                     <span className="text-[10px] text-slate-400 dark:text-slate-500">{opt.desc}</span>
                   </button>
@@ -758,7 +758,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                           frame: { ...design.frame, text: txt },
                         })
                       }
-                      className="px-2 py-1 rounded-lg text-[10px] font-medium bg-slate-200/70 dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 hover:text-indigo-600 transition-colors cursor-pointer"
+                      className="px-2 py-1 rounded-lg text-[10px] font-medium bg-slate-200/70 dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 hover:bg-[#1d7a5d]/10 dark:hover:bg-[#1d7a5d]/20 hover:text-[#1d7a5d] transition-colors cursor-pointer"
                     >
                       {txt}
                     </button>
@@ -844,7 +844,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-indigo-400 hover:border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 text-xs font-semibold transition-colors cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-[#1d7a5d]/50 hover:border-[#1d7a5d] bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/10 text-[#1d7a5d] dark:text-[#93d3b1] text-xs font-semibold transition-colors cursor-pointer"
               >
                 <Upload className="w-4 h-4" />
                 <span>Upload Logo (PNG, SVG, JPG)</span>
@@ -884,7 +884,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                     }}
                     className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/70 shadow-sm'
+                        ? 'border-[#1d7a5d] bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/15 shadow-sm'
                         : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
                     }`}
                   >
@@ -913,7 +913,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                   step="0.02"
                   value={design.logoSize}
                   onChange={(e) => onChange({ logoSize: parseFloat(e.target.value) })}
-                  className="w-full accent-indigo-600 cursor-pointer"
+                  className="w-full accent-[#1d7a5d] cursor-pointer"
                 />
               </div>
 
@@ -929,7 +929,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                   step="1"
                   value={design.logoMargin}
                   onChange={(e) => onChange({ logoMargin: parseInt(e.target.value) })}
-                  className="w-full accent-indigo-600 cursor-pointer"
+                  className="w-full accent-[#1d7a5d] cursor-pointer"
                 />
               </div>
 
@@ -968,7 +968,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                   onClick={() => onChange({ errorCorrectionLevel: item.level })}
                   className={`p-2.5 sm:p-2 rounded-xl border text-center transition-all cursor-pointer min-h-[46px] ${
                     design.errorCorrectionLevel === item.level
-                      ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-bold'
+                      ? 'bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/15 border-[#1d7a5d] text-[#1d7a5d] dark:text-[#93d3b1] font-bold'
                       : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40'
                   }`}
                 >
@@ -992,7 +992,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
               step="5"
               value={design.margin}
               onChange={(e) => onChange({ margin: parseInt(e.target.value) })}
-              className="w-full accent-indigo-600 cursor-pointer h-2"
+              className="w-full accent-[#1d7a5d] cursor-pointer h-2"
             />
           </div>
 
@@ -1014,7 +1014,7 @@ export const QRCustomizer: React.FC<QRCustomizerProps> = ({ design, onChange, on
                   onClick={() => onChange({ size: item.size })}
                   className={`p-2.5 sm:p-2 rounded-xl border text-center transition-all cursor-pointer min-h-[46px] ${
                     design.size === item.size
-                      ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-bold'
+                      ? 'bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/15 border-[#1d7a5d] text-[#1d7a5d] dark:text-[#93d3b1] font-bold'
                       : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40'
                   }`}
                 >

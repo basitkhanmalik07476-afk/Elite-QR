@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 export const FAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -11,10 +11,10 @@ export const FAQ: React.FC = () => {
     },
     {
       q: 'What is the difference between Static and Dynamic QR codes?',
-      a: 'Elite QR creates permanent Static QR codes. In a static QR code, your destination URL or data is encoded directly into the pixel pattern. It functions forever without depending on an intermediary redirect server, never expires, and requires no monthly subscription. In contrast, dynamic QR codes route through third-party redirect links which can break or demand payments later.',
+      a: 'QuickQR creates permanent Static QR codes. In a static QR code, your destination URL or data is encoded directly into the pixel pattern. It functions forever without depending on an intermediary redirect server, never expires, and requires no monthly subscription. In contrast, dynamic QR codes route through third-party redirect links which can break or demand payments later.',
     },
     {
-      q: 'Are the QR codes generated on Elite QR 100% free?',
+      q: 'Are the QR codes generated on QuickQR 100% free?',
       a: 'Yes, completely free with no limits on generation, customization, or downloads. All four formats (PNG, SVG, JPEG, and PDF) are provided free of charge with zero watermarks.',
     },
     {
@@ -35,7 +35,7 @@ export const FAQ: React.FC = () => {
     },
     {
       q: 'Is my personal information stored or tracked on your servers?',
-      a: 'QR generation and scanning run in your browser, and QR payloads are not sent to an Elite QR app server. If you save history, the payload, design, and any logo data are stored in this browser’s localStorage without encryption. Clear history on shared devices. The site also requests Google Fonts from Google; the contact form opens your email app only when configured.',
+      a: 'QR generation and scanning run in your browser, and QR payloads are not sent to a QuickQR app server. If you save history, the payload, design, and any logo data are stored in this browser’s localStorage without encryption. Clear history on shared devices. The site also requests Google Fonts from Google; the contact form opens your email app only when configured.',
     },
     {
       q: 'What are the best practices for printing QR codes?',
@@ -48,51 +48,63 @@ export const FAQ: React.FC = () => {
   };
 
   return (
-    <section id="faq" className="py-20 md:py-28 bg-slate-50 dark:bg-slate-950/60 border-t border-slate-200/80 dark:border-slate-800/80 relative">
+    <section id="faq" aria-labelledby="faq-heading" className="py-20 md:py-28 bg-[#f5f1ea] dark:bg-[#0d1519] border-t border-[#e6ddd1] dark:border-[#1a2c31] relative">
+      <script type="application/ld+json">
+        {JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqs.map((faq) => ({
+            '@type': 'Question',
+            name: faq.q,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: faq.a,
+            },
+          })),
+        })}
+      </script>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
-            <HelpCircle className="w-4 h-4" />
-            <span>Frequently Asked Questions</span>
-            <span aria-hidden="true">·</span>
-            <span>Knowledge Base</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Everything You Need to Know
+          <h2 id="faq-heading" className="text-3xl sm:text-4xl font-extrabold tracking-[-0.05em] text-[#1d1a17] dark:text-white">
+            Everything you need to know
           </h2>
-          <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
-            Answers to common questions about QR generation, print specifications, and privacy.
+          <p className="mt-3 text-base text-[#5b534d] dark:text-[#cfd7d3]">
+            Answers to the common questions that come up during QR generation, printing, and deployment.
           </p>
         </div>
 
-        {/* Accordion List */}
         <div className="space-y-3">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
               <div
                 key={idx}
-                className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-all duration-200"
+                className="rounded-2xl border border-[#e6ddd1] dark:border-[#20353c] bg-[#fffdf9] dark:bg-[#111b21] overflow-hidden transition-all duration-200"
               >
                 <button
                   type="button"
                   onClick={() => toggle(idx)}
-                  className="w-full flex items-center justify-between p-5 text-left font-semibold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer"
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${idx}`}
+                  className="w-full flex items-center justify-between p-5 text-left font-semibold text-[#1d1a17] dark:text-white hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer"
                 >
-                  <span className="text-sm sm:text-base pr-4">{faq.q}</span>
+                  <span id={`faq-question-${idx}`} className="text-sm sm:text-base pr-4">{faq.q}</span>
                   <ChevronDown
-                    className={`w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180 text-indigo-600 dark:text-indigo-400' : ''
+                    className={`w-5 h-5 text-[#8c7e73] dark:text-[#aebdba] shrink-0 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180 text-[#1d7a5d] dark:text-[#93d3b1]' : ''
                     }`}
                   />
                 </button>
 
-                {isOpen && (
-                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800/60 animate-in fade-in duration-200">
-                    {faq.a}
-                  </div>
-                )}
+                <div
+                  id={`faq-answer-${idx}`}
+                  role="region"
+                  aria-labelledby={`faq-question-${idx}`}
+                  hidden={!isOpen}
+                  className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#5b534d] dark:text-[#c4d0cd] leading-relaxed border-t border-[#efe5dc] dark:border-[#20353c] animate-in fade-in duration-200"
+                >
+                  {faq.a}
+                </div>
               </div>
             );
           })}

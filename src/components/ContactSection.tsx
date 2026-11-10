@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Send, MessageSquare, Sparkles } from 'lucide-react';
+import { Send } from 'lucide-react';
 
 interface ContactSectionProps {
   onToast: (type: 'success' | 'error' | 'info', message: string) => void;
@@ -37,38 +37,32 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onToast }) => {
   };
 
   return (
-    <section id="contact" className="py-20 md:py-28 relative">
+    <section id="contact" aria-labelledby="contact-heading" className="py-20 md:py-28 relative">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
-            <MessageSquare className="w-4 h-4" />
-            <span>Support & Inquiries</span>
-            <span aria-hidden="true">·</span>
-            <span>Email-App Based</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Have Questions or Feature Ideas?
+          <h2 id="contact-heading" className="text-3xl sm:text-4xl font-extrabold tracking-[-0.05em] text-[#1d1a17] dark:text-white">
+            Have a question or an idea?
           </h2>
-          <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
-            Send us feedback, request custom enterprise formats, or report issues.
+          <p className="mt-3 text-base text-[#5b534d] dark:text-[#cfd7d3]">
+            Send feedback, request a custom format, or report a technical issue.
           </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 sm:p-8 lg:p-10 shadow-xl shadow-indigo-500/5">
+        <div className="bg-[#fffdf9] dark:bg-[#111b21] rounded-[28px] border border-[#eae1d5] dark:border-[#21363d] p-5 sm:p-8 lg:p-10 shadow-[0_24px_60px_rgba(17,24,39,0.05)]">
           {!hasSupportEmail && (
-            <p className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+            <p className="mb-5 rounded-xl border border-[#f0d5ad] bg-[#faf1e1] p-3 text-sm text-[#8a5b2a] dark:border-[#403327] dark:bg-[#2d2419] dark:text-[#f8d5a6]">
               Contact is not enabled yet. Set <code>VITE_SUPPORT_EMAIL</code> in the deployment environment.
             </p>
           )}
           {hasSupportEmail && (
-            <p className="mb-5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+            <p className="mb-5 rounded-xl border border-[#eae1d5] bg-[#f9f5f1] p-3 text-sm text-[#5b534d] dark:border-[#21363d] dark:bg-[#101b20] dark:text-[#c9d4cf]">
               Submitting opens your email app. Your message is not sent until you send it there.
             </p>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-[#1d1a17] dark:text-slate-300 mb-1">
                   Your Name *
                 </label>
                 <input
@@ -77,11 +71,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onToast }) => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Jane Doe"
-                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-base sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 min-h-[44px]"
+                  className="w-full px-4 py-2.5 bg-[#f6f1ea] dark:bg-[#0d1519] border border-[#e8dfd3] dark:border-[#21363d] rounded-xl text-base sm:text-sm text-[#1d1a17] dark:text-slate-100 placeholder-[#8c7e73] focus:outline-none focus:ring-2 focus:ring-[#1d7a5d]/30 min-h-[44px]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-[#1d1a17] dark:text-slate-300 mb-1">
                   Email Address *
                 </label>
                 <input
@@ -90,19 +84,19 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onToast }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="jane@company.com"
-                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-base sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 min-h-[44px]"
+                  className="w-full px-4 py-2.5 bg-[#f6f1ea] dark:bg-[#0d1519] border border-[#e8dfd3] dark:border-[#21363d] rounded-xl text-base sm:text-sm text-[#1d1a17] dark:text-slate-100 placeholder-[#8c7e73] focus:outline-none focus:ring-2 focus:ring-[#1d7a5d]/30 min-h-[44px]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-[#1d1a17] dark:text-slate-300 mb-1">
                 Topic of Inquiry
               </label>
               <select
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-base sm:text-sm text-slate-900 dark:text-slate-100 cursor-pointer min-h-[44px]"
+                className="w-full px-4 py-2.5 bg-[#f6f1ea] dark:bg-[#0d1519] border border-[#e8dfd3] dark:border-[#21363d] rounded-xl text-base sm:text-sm text-[#1d1a17] dark:text-slate-100 cursor-pointer min-h-[44px]"
               >
                 <option value="General Feedback">General Feedback</option>
                 <option value="Feature Request">New Feature Request</option>
@@ -112,7 +106,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onToast }) => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-[#1d1a17] dark:text-slate-300 mb-1">
                 Your Message *
               </label>
               <textarea
@@ -121,14 +115,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onToast }) => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="How can we help you or improve the QR Studio platform?"
-                className="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-base sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 resize-y min-h-[100px]"
+                className="w-full p-4 bg-[#f6f1ea] dark:bg-[#0d1519] border border-[#e8dfd3] dark:border-[#21363d] rounded-xl text-base sm:text-sm text-[#1d1a17] dark:text-slate-100 placeholder-[#8c7e73] focus:outline-none focus:ring-2 focus:ring-[#1d7a5d]/30 resize-y min-h-[100px]"
               />
             </div>
 
             <button
               type="submit"
               disabled={!hasSupportEmail}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 shadow-md shadow-indigo-500/20 text-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 min-h-[46px]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-[#1d7a5d] hover:bg-[#115a49] shadow-[0_16px_28px_rgba(29,122,93,0.18)] text-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 min-h-[46px]"
             >
               <Send className="w-4 h-4" />
               <span>Submit Message</span>

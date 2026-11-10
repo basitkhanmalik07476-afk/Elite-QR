@@ -39,7 +39,7 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) =
               1. 100% Client-Side Generation
             </h4>
             <p>
-              Unlike many web services that process your inputs on a remote server, Elite QR generates, renders, and compiles every QR code purely inside your local browser runtime via HTML5 Canvas and JavaScript.
+              Unlike many web services that process your inputs on a remote server, QuickQR generates, renders, and compiles every QR code purely inside your local browser runtime via HTML5 Canvas and JavaScript.
             </p>
           </div>
 
@@ -49,7 +49,7 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) =
               2. No QR Payloads Sent to an App Server
             </h4>
             <p>
-              QR payloads are processed in your browser and are not sent to an Elite QR app server. The site requests Google Fonts from Google's servers; those requests may expose standard connection data such as your IP address, but do not include QR payloads.
+              QR payloads are processed in your browser and are not sent to a QuickQR app server. The site requests Google Fonts from Google's servers; those requests may expose standard connection data such as your IP address, but do not include QR payloads.
             </p>
           </div>
 
@@ -89,7 +89,7 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) =
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center cursor-pointer"
+            className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#1d7a5d] hover:bg-[#115a49] transition-colors flex items-center justify-center cursor-pointer"
           >
             I Understand
           </button>

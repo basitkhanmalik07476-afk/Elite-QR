@@ -1,5 +1,5 @@
 {
-  "name": "Elite QR - Professional QR Code Studio",
+  "name": "QuickQR - Professional QR Code Studio",
   "description": "Generate, customize, and scan professional QR codes in real-time. High-res downloads in PNG, SVG, JPEG, and PDF with custom styling and logo embedding.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

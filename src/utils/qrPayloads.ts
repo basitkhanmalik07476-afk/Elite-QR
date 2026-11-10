@@ -3,18 +3,18 @@ export type { QRFormState } from '../types';
 import { generateSocialProfileUrl, SOCIAL_PLATFORMS } from './socialPlatforms';
 
 export const initialFormState: QRFormState = {
-  url: 'https://eliteqr.dev',
-  text: 'Hello from Elite QR Studio! The premier QR solution.',
-  emailAddress: 'hello@eliteqr.dev',
+  url: 'https://example.com',
+  text: 'Hello from QuickQR Studio! The premier QR solution.',
+  emailAddress: 'hello@example.com',
   emailSubject: 'Inquiry from QR Scan',
-  emailBody: 'Hi Elite QR team, I am interested in your services.',
+  emailBody: 'Hi QuickQR team, I am interested in your services.',
   phoneNumber: '+14155552671',
   waCountryCode: '1',
   waNumber: '4155552671',
   waMessage: 'Hello! I scanned your QR code and would like more details.',
   smsNumber: '+14155552671',
   smsMessage: 'Hi! Got your SMS QR code.',
-  wifiSsid: 'Elite_Guest_5G',
+  wifiSsid: 'QuickQR_Guest',
   wifiPassword: 'Password123!',
   wifiEncryption: 'WPA',
   wifiHidden: false,
@@ -29,12 +29,12 @@ export const initialFormState: QRFormState = {
   locLatitude: '',
   locLongitude: '',
   locQuery: 'San Francisco, CA',
-  eventTitle: 'Elite Tech Summit 2026',
+  eventTitle: 'QuickQR Tech Summit 2026',
   eventLocation: 'Moscone Center, SF',
   eventDescription: 'Annual keynote and interactive developer showcase.',
   eventStartDate: '2026-11-15T09:00',
   eventEndDate: '2026-11-15T17:00',
-  socialUsername: 'eliteqr_official',
+  socialUsername: 'quickqr_official',
   cryptoCurrency: 'bitcoin',
   cryptoAddress: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
   cryptoAmount: '0.05',
@@ -43,6 +43,11 @@ export const initialFormState: QRFormState = {
   paymentProvider: '',
   paymentIdentifier: '',
   paymentInstructions: '',
+};
+
+const getWifiField = (payload: string, field: string) => {
+  const match = payload.match(new RegExp(`(?:^|[;:])${field}:((?:\\\\.|[^;])*)`, 'i'));
+  return match?.[1].replace(/\\(.)/g, '$1') ?? '';
 };
 
 export function formatDateTimeToICS(isoString: string): string {
@@ -59,7 +64,7 @@ export function generatePayload(type: QRType, state: QRFormState): { payload: st
   switch (type) {
     case 'url': {
       let raw = state.url.trim();
-      if (!raw) raw = 'https://eliteqr.dev';
+      if (!raw) raw = 'https://example.com';
       if (!/^https?:\/\//i.test(raw)) {
         raw = 'https://' + raw;
       }
@@ -67,7 +72,7 @@ export function generatePayload(type: QRType, state: QRFormState): { payload: st
     }
 
     case 'text': {
-      const raw = state.text.trim() || 'Elite QR Code';
+      const raw = state.text.trim() || 'QuickQR Code';
       return { payload: raw, displayTitle: raw.length > 35 ? raw.slice(0, 32) + '...' : raw };
     }
 
@@ -214,7 +219,7 @@ export function generatePayload(type: QRType, state: QRFormState): { payload: st
     }
 
     default:
-      return { payload: 'https://eliteqr.dev', displayTitle: 'Elite QR' };
+      return { payload: 'https://example.com', displayTitle: 'QuickQR' };
   }
 }
 
@@ -263,16 +268,12 @@ export function getFormStateFromPayload(type: QRType, payload: string): Partial<
         : { smsNumber: sms.slice(0, separator), smsMessage: sms.slice(separator + 1) };
     }
     case 'wifi': {
-      const wifiField = (field: string) => {
-        const match = payload.match(new RegExp(`(?:^|[;:])${field}:((?:\\\\.|[^;])*)`, 'i'));
-        return match?.[1].replace(/\\(.)/g, '$1') ?? '';
-      };
-      const encryption = wifiField('T');
+      const encryption = getWifiField(payload, 'T');
       return {
-        wifiSsid: wifiField('S'),
-        wifiPassword: wifiField('P'),
+        wifiSsid: getWifiField(payload, 'S'),
+        wifiPassword: getWifiField(payload, 'P'),
         wifiEncryption: encryption === 'WEP' || encryption === 'nopass' ? encryption : 'WPA',
-        wifiHidden: wifiField('H').toLowerCase() === 'true',
+        wifiHidden: getWifiField(payload, 'H').toLowerCase() === 'true',
       };
     }
     case 'vcard':
@@ -401,12 +402,9 @@ export function parseScannedData(raw: string): ParsedScannedContent {
 
   // Wi-Fi detection
   if (trimmed.startsWith('WIFI:') || trimmed.startsWith('wifi:')) {
-    const ssidMatch = trimmed.match(/S:([^;]+);/i);
-    const passMatch = trimmed.match(/P:([^;]+);/i);
-    const typeMatch = trimmed.match(/T:([^;]+);/i);
-    const ssid = ssidMatch ? ssidMatch[1] : 'Unknown';
-    const password = passMatch ? passMatch[1] : 'None';
-    const security = typeMatch ? typeMatch[1] : 'WPA';
+    const ssid = getWifiField(trimmed, 'S') || 'Unknown';
+    const password = getWifiField(trimmed, 'P') || 'None';
+    const security = getWifiField(trimmed, 'T') || 'WPA';
     return {
       type: 'wifi',
       title: `Wi-Fi Network: ${ssid}`,

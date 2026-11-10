@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Globe,
   FileText,
@@ -12,6 +12,8 @@ import {
   Calendar,
   Coins,
   Banknote,
+  Search,
+  X,
 } from 'lucide-react';
 import { QRType, SocialQRType } from '../../types';
 import { SocialPlatformIcon } from '../SocialPlatformIcon';
@@ -51,20 +53,82 @@ const QR_TYPES: TypeItem[] = [
   { type: 'payment', label: 'Bank / Wallet Payment', icon: Banknote, category: 'business' },
 ];
 
+const POPULAR_TYPES: QRType[] = ['url', 'wifi', 'text', 'whatsapp', 'vcard', 'instagram', 'email', 'payment'];
+
 export const QRTypeSelector: React.FC<QRTypeSelectorProps> = ({ selectedType, onSelectType }) => {
+  const [activeCategory, setActiveCategory] = useState('Popular');
+  const [search, setSearch] = useState('');
+  const categories = ['Popular', 'All types', 'Web & text', 'Calls & messages', 'Business', 'Social'];
+  const visibleTypes = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return QR_TYPES.filter((item) => {
+      if (query) return `${item.label} ${item.type}`.toLowerCase().includes(query);
+      if (activeCategory === 'Popular') return POPULAR_TYPES.includes(item.type);
+      if (activeCategory === 'All types') return true;
+      if (activeCategory === 'Web & text') return item.category === 'web';
+      if (activeCategory === 'Calls & messages') return item.category === 'comm';
+      if (activeCategory === 'Business') return item.category === 'business';
+      return item.category === 'social';
+    });
+  }, [activeCategory, search]);
+
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-3">
-        <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-          Select QR Code Content Type
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 className="text-sm font-bold text-slate-900">Choose a QR type</h3>
+          <p className="mt-0.5 text-xs text-slate-500">Pick what you want people to open when they scan.</p>
+        </div>
+        <label className="flex min-h-11 w-full items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-400 transition-colors focus-within:border-indigo-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-100 sm:max-w-[220px]">
+          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search QR types"
+            aria-label="Search QR types"
+            className="min-w-0 flex-1 bg-transparent text-base text-slate-800 outline-none placeholder:text-slate-400 sm:text-sm"
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              aria-label="Clear QR type search"
+              className="rounded-md p-1 text-slate-400 hover:bg-slate-200 hover:text-slate-700"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </label>
-        <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">
-          {QR_TYPES.length} Types Available
-        </span>
       </div>
 
-      <div className="grid grid-cols-2 min-[475px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-2.5">
-        {QR_TYPES.map((item) => {
+      <div className="mb-3 grid grid-cols-3 gap-1.5 sm:grid-cols-6" role="group" aria-label="Filter QR types">
+        {categories.map((category) => (
+          <button
+            key={category}
+            type="button"
+            onClick={() => {
+              setActiveCategory(category);
+              setSearch('');
+            }}
+            aria-pressed={activeCategory === category && !search}
+            className={`flex min-h-10 items-center justify-center rounded-full border px-1.5 text-center text-[10px] font-semibold leading-tight transition-colors sm:px-2 sm:text-[11px] ${
+              activeCategory === category && !search
+                ? 'border-[#1d7a5d] bg-[#1d7a5d] text-white'
+                : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+            }`}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      <p className="mb-2 text-[11px] font-medium text-slate-500" aria-live="polite">
+        {search ? `${visibleTypes.length} matching types` : activeCategory === 'Popular' ? 'Popular choices' : `${visibleTypes.length} types`}
+      </p>
+      {visibleTypes.length > 0 ? (
+      <div className="grid grid-cols-2 gap-2 min-[480px]:grid-cols-3 lg:grid-cols-2 min-[1150px]:grid-cols-3">
+        {visibleTypes.map((item) => {
           const Icon = item.icon;
           const isSelected = selectedType === item.type;
 
@@ -73,30 +137,47 @@ export const QRTypeSelector: React.FC<QRTypeSelectorProps> = ({ selectedType, on
               key={item.type}
               type="button"
               onClick={() => onSelectType(item.type)}
-              className={`flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl text-left border transition-all duration-200 cursor-pointer min-h-[46px] hover:scale-[1.02] active:scale-[0.98] ${
+              aria-pressed={isSelected}
+              className={`flex min-h-[52px] min-w-0 items-center gap-2 rounded-xl border px-2.5 py-2 text-left transition-colors cursor-pointer ${
                 isSelected
-                  ? 'bg-gradient-to-r from-indigo-50 to-indigo-100/60 dark:from-indigo-950/70 dark:to-indigo-900/40 border-indigo-500 dark:border-indigo-400 text-indigo-700 dark:text-indigo-300 shadow-sm font-semibold ring-1 ring-indigo-500/20'
-                  : 'bg-white dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                  ? 'border-[#1d7a5d] bg-[#1d7a5d]/5 text-[#1d7a5d] shadow-sm ring-1 ring-[#1d7a5d]/15'
+                  : 'border-slate-200 bg-white text-slate-700 hover:border-[#1d7a5d]/50 hover:bg-slate-50'
               }`}
             >
               <div
-                className={`p-1.5 rounded-lg shrink-0 transition-transform duration-200 ${
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                   isSelected
-                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30 scale-105'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                    ? 'bg-[#1d7a5d] text-white'
+                    : 'bg-slate-100 text-slate-600'
                 }`}
               >
                 {Icon ? (
-                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <Icon className="h-4 w-4" />
                 ) : item.socialType ? (
-                  <SocialPlatformIcon platform={item.socialType} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <SocialPlatformIcon platform={item.socialType} className="h-4 w-4" />
                 ) : null}
               </div>
-              <span className="text-[11px] sm:text-xs font-medium truncate">{item.label}</span>
+              <span className="min-w-0 text-xs font-semibold leading-tight">{item.label}</span>
             </button>
           );
         })}
       </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center">
+          <p className="text-sm font-semibold text-slate-700">No QR types found</p>
+          <p className="mt-1 text-xs text-slate-500">Try another search or browse all types.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setSearch('');
+              setActiveCategory('All types');
+            }}
+            className="mt-3 min-h-10 rounded-lg px-3 text-xs font-bold text-[#1d7a5d] hover:bg-[#1d7a5d]/5"
+          >
+            Browse all types
+          </button>
+        </div>
+      )}
     </div>
   );
 };

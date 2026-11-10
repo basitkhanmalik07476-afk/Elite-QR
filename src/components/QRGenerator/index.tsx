@@ -61,80 +61,50 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({
   };
 
   return (
-    <section id="generator" className="py-16 md:py-24 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Title */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
-            <span>Core Studio Engine</span>
-            <span aria-hidden="true">·</span>
-            <span>Instant Client-Side Vector Generation</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white text-balance">
-            Interactive QR Code Generator & Studio
+    <section id="generator" aria-labelledby="generator-heading" className="relative py-12 sm:py-16 lg:py-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-10 lg:mb-12">
+          <h2 id="generator-heading" className="text-balance text-2xl font-extrabold leading-tight tracking-tight text-slate-950 sm:text-3xl lg:text-4xl">
+            Create a QR code that fits your brand
           </h2>
-          <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
-            Select your content type, customize styles with real-time feedback, and export in four professional formats.
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+            Choose what to share, style your code, and download a scan-ready design in seconds.
           </p>
         </div>
 
-        {/* Main Grid: Inputs + Studio vs. Live Preview Sticky Column */}
-        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-          {/* Left / Center 7 cols: Content Types, Inputs, Customizer */}
-          <div className="lg:col-span-7 space-y-5 sm:space-y-6">
-            {/* Type Selector Card */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 shadow-sm">
-              <QRTypeSelector selectedType={selectedType} onSelectType={setSelectedType} />
-            </div>
-
-            {/* Input Forms Card */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 shadow-sm">
-              <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100 dark:border-slate-800">
-                <span className="text-sm font-bold text-slate-900 dark:text-white">
-                  Content Configuration
-                </span>
-                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
-                  Type: {selectedType.toUpperCase()}
-                </span>
-              </div>
-              <QRInputForms
-                type={selectedType}
-                formState={formState}
-                onChange={handleFormChange}
-              />
-            </div>
-
-            {/* Mobile-only Quick Jump to Preview */}
-            <div className="lg:hidden flex justify-end">
-              <button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById('qr-preview-card');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-900 flex items-center gap-1.5 cursor-pointer min-h-[40px]"
-              >
-                <span>Jump to Live Preview & Download</span>
-                <span>↓</span>
-              </button>
-            </div>
-
-            {/* Customizer Studio */}
-            <QRCustomizer
-              design={designConfig}
-              onChange={handleDesignChange}
-              onToast={onToast}
-            />
+        <div className="grid grid-cols-1 items-start gap-4 sm:gap-5 lg:grid-cols-12 lg:gap-6">
+          <div className="order-1 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.04)] sm:rounded-3xl sm:p-6 lg:col-start-1 lg:col-span-7 lg:row-start-1">
+            <QRTypeSelector selectedType={selectedType} onSelectType={setSelectedType} />
           </div>
 
-          {/* Right 5 cols: Sticky Live QR Preview & Downloads */}
-          <div id="qr-preview-card" className="lg:col-span-5 lg:sticky lg:top-24 space-y-6 scroll-mt-24">
+          <div className="order-2 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.04)] sm:rounded-3xl sm:p-6 lg:col-start-1 lg:col-span-7 lg:row-start-2">
+            <div className="mb-5 flex items-center justify-between gap-3 border-b border-slate-100 pb-4">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">Your content</h3>
+                <p className="mt-0.5 text-xs text-slate-500">Add the details for your {selectedType.toUpperCase()} QR code.</p>
+              </div>
+              <span className="shrink-0 rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-indigo-700 sm:text-xs">
+                {selectedType}
+              </span>
+            </div>
+            <QRInputForms type={selectedType} formState={formState} onChange={handleFormChange} />
+          </div>
+
+          <div id="qr-preview-card" className="order-3 scroll-mt-24 lg:sticky lg:top-24 lg:col-start-8 lg:col-span-5 lg:row-start-1 lg:row-span-3 lg:self-start">
             <QRPreview
               payload={payload}
               displayTitle={displayTitle}
               type={selectedType}
               design={designConfig}
               onSaveHistory={handleSaveToHistory}
+              onToast={onToast}
+            />
+          </div>
+
+          <div className="order-4 lg:col-span-12 lg:row-start-4">
+            <QRCustomizer
+              design={designConfig}
+              onChange={handleDesignChange}
               onToast={onToast}
             />
           </div>

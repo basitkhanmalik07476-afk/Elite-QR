@@ -40,9 +40,12 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
   const streamRef = useRef<MediaStream | null>(null);
   const animationFrameId = useRef<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraRequestRef = useRef(0);
+  const uploadRequestRef = useRef(0);
 
   // Stop camera stream safely
   const stopCamera = useCallback(() => {
+    cameraRequestRef.current += 1;
     if (animationFrameId.current) {
       cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = null;
@@ -93,37 +96,61 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
   }, [scanning, stopCamera, onToast]);
 
   // Start Camera
-  const startCamera = async () => {
+  const startCamera = async (requestedFacingMode: 'environment' | 'user' = facingMode) => {
     stopCamera();
+    const requestId = cameraRequestRef.current;
     setCameraError(null);
 
+    let stream: MediaStream | null = null;
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error('Camera access is not supported by this browser.');
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: { ideal: facingMode },
+          facingMode: { ideal: requestedFacingMode },
           width: { ideal: 1280 },
           height: { ideal: 720 },
         },
       });
 
-      streamRef.current = stream;
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.setAttribute('playsinline', 'true');
-        await videoRef.current.play();
-        setScanning(true);
+      if (requestId !== cameraRequestRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
       }
-    } catch (err: any) {
+
+      const video = videoRef.current;
+      if (!video) throw new Error('Camera preview is unavailable.');
+
+      streamRef.current = stream;
+      video.srcObject = stream;
+      video.setAttribute('playsinline', 'true');
+      await video.play();
+
+      if (requestId !== cameraRequestRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        if (streamRef.current === stream) streamRef.current = null;
+        if (video.srcObject === stream) video.srcObject = null;
+        return;
+      }
+
+      setScanning(true);
+    } catch (err: unknown) {
+      if (requestId !== cameraRequestRef.current) {
+        stream?.getTracks().forEach((track) => track.stop());
+        return;
+      }
+
       console.warn('Camera error:', err);
       let msg = 'Could not access camera. Please verify camera permissions in your browser.';
-      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      const errorName = err instanceof Error ? err.name : '';
+      stream?.getTracks().forEach((track) => track.stop());
+      if (streamRef.current === stream) streamRef.current = null;
+      if (videoRef.current?.srcObject === stream) videoRef.current.srcObject = null;
+      if (errorName === 'NotAllowedError' || errorName === 'PermissionDeniedError') {
         msg = 'Camera permission was denied. Please allow camera access in browser site settings.';
-      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+      } else if (errorName === 'NotFoundError' || errorName === 'DevicesNotFoundError') {
         msg = 'No camera device found on this system.';
       }
       setCameraError(msg);
@@ -145,6 +172,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      uploadRequestRef.current += 1;
       stopCamera();
     };
   }, [stopCamera]);
@@ -154,7 +182,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
     const next = facingMode === 'environment' ? 'user' : 'environment';
     setFacingMode(next);
     if (scanning) {
-      setTimeout(() => startCamera(), 100);
+      void startCamera(next);
     }
   };
 
@@ -177,34 +205,76 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
   };
 
   // Decode from file upload
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    input.value = '';
     if (!file) return;
 
+    const requestId = ++uploadRequestRef.current;
+    setScannedResult(null);
+    setParsedResult(null);
+    setImagePreview(null);
+
+    if (file.type && !['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      onToast('error', 'Unsupported image type. Please choose a PNG, JPG, or WebP image.');
+      return;
+    }
+
     const reader = new FileReader();
+    reader.onerror = () => {
+      if (requestId !== uploadRequestRef.current) return;
+      onToast('error', 'Could not read the selected image. Please try another PNG, JPG, or WebP file.');
+    };
     reader.onload = (event) => {
-      const dataUrl = event.target?.result as string;
+      if (requestId !== uploadRequestRef.current) return;
+      const dataUrl = event.target?.result;
+      if (typeof dataUrl !== 'string') {
+        onToast('error', 'Could not read the selected image. Please try another PNG, JPG, or WebP file.');
+        return;
+      }
+
       setImagePreview(dataUrl);
 
       const img = new Image();
       img.onload = () => {
+        if (requestId !== uploadRequestRef.current) return;
+        if (!img.naturalWidth || !img.naturalHeight) {
+          setImagePreview(null);
+          onToast('error', 'The selected file is not a readable image. Please choose a PNG, JPG, or WebP image.');
+          return;
+        }
+
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        ctx.drawImage(img, 0, 0);
-
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height);
-
-        if (code && code.data) {
-          setScannedResult(code.data);
-          setParsedResult(parseScannedData(code.data));
-          onToast('success', 'QR Code image decoded successfully!');
-        } else {
-          onToast('error', 'No QR code detected in the uploaded image. Try an image with higher contrast or clear focus.');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) {
+          onToast('error', 'Could not process this image in your browser. Please try another image.');
+          return;
         }
+
+        try {
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+          if (code && code.data) {
+            setScannedResult(code.data);
+            setParsedResult(parseScannedData(code.data));
+            onToast('success', 'QR Code image decoded successfully!');
+          } else {
+            onToast('error', 'No QR code detected in the uploaded image. Try an image with higher contrast or clear focus.');
+          }
+        } catch (err) {
+          console.error('Image QR decoding error:', err);
+          onToast('error', 'Could not decode this image. Please choose a valid PNG, JPG, or WebP file.');
+        }
+      };
+      img.onerror = () => {
+        if (requestId !== uploadRequestRef.current) return;
+        setImagePreview(null);
+        onToast('error', 'The selected file is not a readable image. Please choose a PNG, JPG, or WebP image.');
       };
       img.src = dataUrl;
     };
@@ -226,16 +296,11 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
   };
 
   return (
-    <section id="scanner" className="py-16 md:py-24 bg-slate-100/60 dark:bg-slate-900/40 relative border-y border-slate-200/80 dark:border-slate-800/80">
+    <section id="scanner" aria-labelledby="scanner-heading" className="py-16 md:py-24 bg-slate-100/60 dark:bg-slate-900/40 relative border-y border-slate-200/80 dark:border-slate-800/80">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
-            <span>High-Speed Optical Decoder</span>
-            <span aria-hidden="true">·</span>
-            <span>Zero Upload to Cloud</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h2 id="scanner-heading" className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             Universal QR Code Scanner
           </h2>
           <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
@@ -253,7 +318,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
               }}
               className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-4 text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                 activeTab === 'camera'
-                  ? 'border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-indigo-50/30 dark:bg-indigo-950/20'
+                  ? 'border-b-2 border-[#1d7a5d] text-[#1d7a5d] dark:text-[#93d3b1] bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/10'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -267,7 +332,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
               }}
               className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-4 text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                 activeTab === 'upload'
-                  ? 'border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-indigo-50/30 dark:bg-indigo-950/20'
+                  ? 'border-b-2 border-[#1d7a5d] text-[#1d7a5d] dark:text-[#93d3b1] bg-[#1d7a5d]/5 dark:bg-[#1d7a5d]/10'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -317,8 +382,8 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                       </p>
                       <button
                         type="button"
-                        onClick={startCamera}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 shadow-lg shadow-indigo-500/20 text-sm transition-all hover:scale-105 active:scale-95 cursor-pointer min-h-[46px]"
+                        onClick={() => void startCamera()}
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-[#1d7a5d] hover:bg-[#115a49] shadow-[0_16px_28px_rgba(29,122,93,0.18)] text-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer min-h-[46px]"
                       >
                         <Camera className="w-4 h-4" />
                         <span>Start Camera Scanner</span>
@@ -470,7 +535,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                         href={parsedResult.actionUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors cursor-pointer"
+                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#1d7a5d] hover:bg-[#115a49] text-white shadow-sm transition-colors cursor-pointer"
                       >
                         <ExternalLink className="w-4 h-4" />
                         <span>{parsedResult.actionLabel || 'Open Link'}</span>
@@ -482,7 +547,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                       <button
                         type="button"
                         onClick={() => handleCopyScanned(parsedResult.details?.Password)}
-                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-cyan-600 hover:bg-cyan-500 text-white cursor-pointer"
+                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#1d7a5d] hover:bg-[#115a49] text-white cursor-pointer"
                       >
                         <Wifi className="w-4 h-4" />
                         <span>Copy Wi-Fi Password</span>
@@ -493,7 +558,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                       <button
                         type="button"
                         onClick={() => handleCopyScanned(parsedResult.details?.['Account / Payment ID'])}
-                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer"
+                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#1d7a5d] hover:bg-[#115a49] text-white cursor-pointer"
                       >
                         <Copy className="w-4 h-4" />
                         <span>Copy Account / Payment ID</span>
@@ -505,7 +570,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                       <button
                         type="button"
                         onClick={() => onUseInGenerator(scannedResult)}
-                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 text-white cursor-pointer"
+                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#1d7a5d] hover:bg-[#115a49] text-white cursor-pointer"
                       >
                         <Sparkles className="w-4 h-4 text-indigo-400" />
                         <span>Load into Generator</span>

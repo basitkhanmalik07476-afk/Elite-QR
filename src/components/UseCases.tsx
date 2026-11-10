@@ -111,7 +111,7 @@ export const UseCases: React.FC<UseCasesProps> = ({ onSelectUseCaseTemplate }) =
       description:
         'Display your Instagram, YouTube channel, or LinkedIn handle on storefront windows, exhibition booths, and presentation slides to turn passersby into followers instantly.',
       benefits: ['Direct profile launch in app', 'Boost organic social growth', 'Great for creators & influencers'],
-      demoData: { socialUsername: 'elite_studio_hq' },
+      demoData: { socialUsername: 'quickqr_studio' },
     },
     {
       title: 'Education & Classroom Handouts',
@@ -129,20 +129,15 @@ export const UseCases: React.FC<UseCasesProps> = ({ onSelectUseCaseTemplate }) =
   const current = cases[selectedCategory];
 
   return (
-    <section id="use-cases" className="py-20 md:py-28 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="use-cases" aria-labelledby="use-cases-heading" className="py-20 md:py-28 relative">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
-            <span>Versatile Applications</span>
-            <span aria-hidden="true">·</span>
-            <span>Across All Sectors</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h2 id="use-cases-heading" className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             Designed for Real-World Scenarios
           </h2>
           <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
-            Discover how businesses, restaurants, creators, and organizers leverage Elite QR.
+            Discover how businesses, restaurants, creators, and organizers leverage QuickQR.
           </p>
         </div>
 
@@ -158,8 +153,8 @@ export const UseCases: React.FC<UseCasesProps> = ({ onSelectUseCaseTemplate }) =
                 onClick={() => setSelectedCategory(idx)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25 scale-[1.02]'
-                    : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    ? 'bg-[#1d7a5d] text-white shadow-[0_12px_24px_rgba(29,122,93,0.18)] scale-[1.02]'
+                    : 'bg-[#fffdf9] dark:bg-[#111b21] border border-[#e8dfd3] dark:border-[#21363d] text-[#1d1a17] dark:text-slate-300 hover:bg-[#f7f4f0] dark:hover:bg-[#172228]'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -169,25 +164,24 @@ export const UseCases: React.FC<UseCasesProps> = ({ onSelectUseCaseTemplate }) =
           })}
         </div>
 
-        {/* Active Use Case Detail Showcase Card */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800/90 p-5 sm:p-8 lg:p-12 shadow-xl shadow-indigo-500/5">
+        <div className="bg-[#fffdf9] dark:bg-[#111b21] rounded-[28px] border border-[#eae1d5] dark:border-[#21363d] p-5 sm:p-8 lg:p-12 shadow-[0_24px_60px_rgba(17,24,39,0.05)]">
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             {/* Left Column info */}
             <div className="lg:col-span-7">
-              <div className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
+              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#1d7a5d] dark:text-[#93d3b1] mb-2">
                 {current.title}
               </div>
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 dark:text-white mb-4">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-[-0.04em] text-[#1d1a17] dark:text-white mb-4">
                 {current.headline}
               </h3>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+              <p className="text-sm sm:text-base text-[#5b534d] dark:text-slate-300 leading-relaxed mb-6">
                 {current.description}
               </p>
 
               <div className="space-y-2.5 mb-8">
                 {current.benefits.map((b, i) => (
-                  <div key={i} className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium">
-                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 shrink-0" />
+                  <div key={i} className="flex items-center gap-2.5 text-xs sm:text-sm text-[#1d1a17] dark:text-slate-300 font-medium">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#1d7a5d] shrink-0" />
                     <span>{b}</span>
                   </div>
                 ))}
@@ -196,27 +190,27 @@ export const UseCases: React.FC<UseCasesProps> = ({ onSelectUseCaseTemplate }) =
               <button
                 type="button"
                 onClick={() => onSelectUseCaseTemplate(current.type, current.demoData)}
-                className="group relative overflow-hidden w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 transition-all shadow-md shadow-indigo-600/20 cursor-pointer min-h-[44px] hover:scale-[1.02] active:scale-[0.98]"
+                className="group relative overflow-hidden w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs font-bold text-white bg-[#1d7a5d] hover:bg-[#115a49] transition-all shadow-[0_16px_28px_rgba(29,122,93,0.18)] cursor-pointer min-h-[44px] hover:scale-[1.02] active:scale-[0.98]"
               >
                 <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
-                <span>Load This Template in Generator</span>
+                <span>Load this template in generator</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
 
             {/* Right Column visual preview mockup */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="w-full max-w-sm rounded-2xl bg-gradient-to-tr from-slate-50 to-indigo-50/50 dark:from-slate-950 dark:to-indigo-950/40 p-6 border border-slate-200 dark:border-slate-800 text-center">
-                <div className="w-12 h-12 rounded-xl bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center mx-auto mb-4 text-indigo-600 dark:text-indigo-400">
+              <div className="w-full max-w-sm rounded-[24px] bg-[linear-gradient(135deg,_#f4efe9,_#ffffff_40%,_#edf8f3)] dark:bg-[linear-gradient(135deg,_#111b21,_#101a1e_35%,_#122a2a)] p-6 border border-[#e8dfd3] dark:border-[#21363d] text-center shadow-[0_18px_38px_rgba(17,24,39,0.05)]">
+                <div className="w-12 h-12 rounded-xl bg-white dark:bg-[#101b20] shadow-sm flex items-center justify-center mx-auto mb-4 text-[#1d7a5d] dark:text-[#93d3b1]">
                   <current.icon className="w-6 h-6" />
                 </div>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
-                  Ready-To-Use Preset
+                <h4 className="text-sm font-bold text-[#1d1a17] dark:text-white mb-1">
+                  Ready-to-use preset
                 </h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                <p className="text-xs text-[#5b534d] dark:text-slate-400 mb-4">
                   Type: {current.type.toUpperCase()} template with tuned contrast and sizing.
                 </p>
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-mono text-slate-600 dark:text-slate-300 break-all text-left">
+                <div className="p-3 rounded-xl bg-white dark:bg-[#101b20] border border-[#e8dfd3] dark:border-[#21363d] text-xs font-mono text-[#5b534d] dark:text-slate-300 break-all text-left">
                   {JSON.stringify(current.demoData, null, 2)}
                 </div>
               </div>
