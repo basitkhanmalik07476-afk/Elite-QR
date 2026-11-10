@@ -118,32 +118,32 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-[#5b534d] dark:text-[#c9d4cf]">
               <li>
-                <button type="button" onClick={() => handleTypeClick('url')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('url')} className="link-action block w-full text-left hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Website Link QR
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('wifi')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('wifi')} className="link-action block w-full text-left hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Wi-Fi Password QR
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('vcard')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('vcard')} className="link-action block w-full text-left hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Digital Business Card (vCard)
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('whatsapp')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('whatsapp')} className="link-action block w-full text-left hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   WhatsApp Direct Chat QR
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('payment')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('payment')} className="link-action block w-full text-left hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Bank / Wallet Payment QR
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('crypto')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('crypto')} className="link-action block w-full text-left hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Crypto Payment QR
                 </button>
               </li>
