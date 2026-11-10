@@ -85,7 +85,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onNavigateTo }) => {
         <div className="mt-12 text-center">
           <button
             onClick={() => onNavigateTo('generator')}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] w-full sm:w-auto rounded-xl font-bold text-white bg-[#1d7a5d] shadow-[0_16px_28px_rgba(29,122,93,0.18)] hover:bg-[#115a49] hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer text-sm"
+            className="primary-action inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] w-full sm:w-auto rounded-xl font-bold cursor-pointer text-sm"
           >
             <span>Start building your QR code</span>
             <ArrowRight className="w-4 h-4" />

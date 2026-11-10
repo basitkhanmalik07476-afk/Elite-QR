@@ -724,9 +724,8 @@ export const QRPreview: React.FC<QRPreviewProps> = ({
             type="button"
             onClick={() => handleDownload('png')}
             disabled={downloading !== null}
-            className="group relative overflow-hidden flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl text-xs font-bold text-white bg-[#1d7a5d] hover:bg-[#115a49] shadow-[0_12px_24px_rgba(29,122,93,0.18)] transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 min-h-[44px]"
+            className="primary-action flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl text-xs font-bold cursor-pointer min-h-[44px]"
           >
-            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
             <Download className="w-4 h-4 shrink-0" />
             <span className="truncate">PNG Image</span>
           </button>

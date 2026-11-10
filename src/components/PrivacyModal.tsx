@@ -89,7 +89,7 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) =
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#1d7a5d] hover:bg-[#115a49] transition-colors flex items-center justify-center cursor-pointer"
+            className="primary-action w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center cursor-pointer"
           >
             I Understand
           </button>

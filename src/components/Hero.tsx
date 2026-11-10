@@ -33,18 +33,18 @@ export const Hero: React.FC<HeroProps> = ({ onNavigateTo }) => {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 mb-10 w-full sm:w-auto">
               <button
                 onClick={() => onNavigateTo('generator')}
-                className="group relative overflow-hidden w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 text-sm sm:text-base font-bold text-white bg-[#1d7a5d] rounded-xl shadow-[0_18px_26px_rgba(29,122,93,0.18)] transition-all duration-200 hover:bg-[#115a49] hover:scale-[1.01] active:scale-[0.99] cursor-pointer min-h-[48px]"
+                className="primary-action w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-sm sm:text-base font-bold cursor-pointer min-h-[48px]"
               >
-                <Sparkles className="w-5 h-5 shrink-0 transition-transform group-hover:rotate-12" />
+                <Sparkles className="w-5 h-5 shrink-0" />
                 <span>Generate QR Code</span>
-                <ArrowRight className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </button>
 
               <button
                 onClick={() => onNavigateTo('scanner')}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 text-sm sm:text-base font-semibold text-[#1d1a17] dark:text-stone-200 bg-white/80 dark:bg-[#10191d] hover:bg-white dark:hover:bg-[#172228] border border-[#e8dfd3] dark:border-[#24343b] rounded-xl shadow-[0_12px_25px_rgba(16,24,40,0.06)] transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] cursor-pointer min-h-[48px]"
+                className="primary-action w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm sm:text-base font-semibold cursor-pointer min-h-[48px]"
               >
-                <Scan className="w-4 h-4 text-[#1d7a5d] shrink-0" />
+                <Scan className="w-4 h-4 shrink-0" />
                 <span>Launch Scanner</span>
               </button>
             </div>

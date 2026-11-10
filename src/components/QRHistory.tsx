@@ -143,6 +143,8 @@ export const QRHistory: React.FC<QRHistoryProps> = ({
                         <img
                           src={item.previewDataUrl}
                           alt={item.title}
+                          loading="lazy"
+                          decoding="async"
                           className="max-h-full max-w-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
@@ -167,7 +169,7 @@ export const QRHistory: React.FC<QRHistoryProps> = ({
                       type="button"
                       onClick={() => onLoadItem(item)}
                       title="Load into Generator"
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#1d7a5d] dark:text-[#93d3b1] hover:bg-[#1d7a5d]/5 dark:hover:bg-[#1d7a5d]/10 transition-colors cursor-pointer min-h-[38px]"
+                      className="link-action flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#1d7a5d] dark:text-[#93d3b1] hover:bg-[#1d7a5d]/5 dark:hover:bg-[#1d7a5d]/10 cursor-pointer min-h-[38px]"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>Edit</span>

@@ -190,11 +190,10 @@ export const UseCases: React.FC<UseCasesProps> = ({ onSelectUseCaseTemplate }) =
               <button
                 type="button"
                 onClick={() => onSelectUseCaseTemplate(current.type, current.demoData)}
-                className="group relative overflow-hidden w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs font-bold text-white bg-[#1d7a5d] hover:bg-[#115a49] transition-all shadow-[0_16px_28px_rgba(29,122,93,0.18)] cursor-pointer min-h-[44px] hover:scale-[1.02] active:scale-[0.98]"
+                className="primary-action w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs font-bold cursor-pointer min-h-[44px]"
               >
-                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
                 <span>Load this template in generator</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 

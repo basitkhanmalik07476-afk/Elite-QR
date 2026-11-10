@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -26,6 +24,10 @@
     scroll-behavior: smooth;
     scrollbar-color: var(--primary) var(--bg);
     scrollbar-width: thin;
+  }
+
+  section[id] {
+    scroll-margin-top: 80px;
   }
 
   html.dark {
@@ -60,7 +62,7 @@
   }
 
   body {
-    font-family: 'Manrope', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--bg);
     color: var(--text);
     text-rendering: optimizeLegibility;
@@ -70,8 +72,58 @@
     box-sizing: border-box;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   ::selection {
     background: rgba(29, 122, 93, 0.18);
+  }
+}
+
+@layer components {
+  .primary-action {
+    background-color: var(--primary);
+    color: #fff;
+    box-shadow: 0 16px 28px rgba(29, 122, 93, 0.18);
+    transition: background-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  .link-action {
+    transition: color 200ms ease, background-color 200ms ease, transform 200ms ease;
+  }
+
+  .primary-action:hover:not(:disabled) {
+    background-color: var(--primary-deep);
+    transform: scale(1.01);
+  }
+
+  .link-action:hover:not(:disabled) {
+    transform: scale(1.01);
+  }
+
+  .primary-action:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .link-action:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .primary-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 }
 

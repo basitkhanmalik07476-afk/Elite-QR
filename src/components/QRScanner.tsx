@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import jsQR from 'jsqr';
 import {
   Camera,
   Upload,
@@ -18,6 +17,18 @@ import {
   StopCircle,
 } from 'lucide-react';
 import { parseScannedData, ParsedScannedContent } from '../utils/qrPayloads';
+
+let jsQRModulePromise: Promise<typeof import('jsqr')> | null = null;
+
+const loadJsQR = () => {
+  if (!jsQRModulePromise) {
+    jsQRModulePromise = import('jsqr').catch((error: unknown) => {
+      jsQRModulePromise = null;
+      throw error;
+    });
+  }
+  return jsQRModulePromise;
+};
 
 interface QRScannerProps {
   onToast: (type: 'success' | 'error' | 'info', message: string) => void;
@@ -62,9 +73,21 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
   }, []);
 
   // Continuous frame scanning loop
-  const scanFrame = useCallback(() => {
+  const scanFrame = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current || !scanning) return;
 
+    let jsQR: (typeof import('jsqr'))['default'];
+    try {
+      ({ default: jsQR } = await loadJsQR());
+    } catch (err) {
+      if (!streamRef.current) return;
+      console.error('QR decoder load error:', err);
+      stopCamera();
+      onToast('error', 'QR scanner could not load. Check your connection and try again.');
+      return;
+    }
+
+    if (!streamRef.current || !videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -90,8 +113,10 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
       }
     }
 
-    if (scanning) {
-      animationFrameId.current = requestAnimationFrame(scanFrame);
+    if (scanning && streamRef.current) {
+      animationFrameId.current = requestAnimationFrame(() => {
+        void scanFrame();
+      });
     }
   }, [scanning, stopCamera, onToast]);
 
@@ -237,7 +262,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
       setImagePreview(dataUrl);
 
       const img = new Image();
-      img.onload = () => {
+      img.onload = async () => {
         if (requestId !== uploadRequestRef.current) return;
         if (!img.naturalWidth || !img.naturalHeight) {
           setImagePreview(null);
@@ -257,6 +282,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
         try {
           ctx.drawImage(img, 0, 0);
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const { default: jsQR } = await loadJsQR();
           const code = jsQR(imageData.data, imageData.width, imageData.height);
 
           if (code && code.data) {
@@ -383,7 +409,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                       <button
                         type="button"
                         onClick={() => void startCamera()}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-[#1d7a5d] hover:bg-[#115a49] shadow-[0_16px_28px_rgba(29,122,93,0.18)] text-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer min-h-[46px]"
+                        className="primary-action w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold cursor-pointer min-h-[46px]"
                       >
                         <Camera className="w-4 h-4" />
                         <span>Start Camera Scanner</span>
@@ -535,7 +561,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                         href={parsedResult.actionUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#1d7a5d] hover:bg-[#115a49] text-white shadow-sm transition-colors cursor-pointer"
+                        className="primary-action flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold cursor-pointer"
                       >
                         <ExternalLink className="w-4 h-4" />
                         <span>{parsedResult.actionLabel || 'Open Link'}</span>
@@ -547,7 +573,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                       <button
                         type="button"
                         onClick={() => handleCopyScanned(parsedResult.details?.Password)}
-                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#1d7a5d] hover:bg-[#115a49] text-white cursor-pointer"
+                        className="primary-action flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold cursor-pointer"
                       >
                         <Wifi className="w-4 h-4" />
                         <span>Copy Wi-Fi Password</span>
@@ -558,7 +584,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                       <button
                         type="button"
                         onClick={() => handleCopyScanned(parsedResult.details?.['Account / Payment ID'])}
-                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#1d7a5d] hover:bg-[#115a49] text-white cursor-pointer"
+                        className="primary-action flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold cursor-pointer"
                       >
                         <Copy className="w-4 h-4" />
                         <span>Copy Account / Payment ID</span>
@@ -570,9 +596,9 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onToast, onUseInGenerator 
                       <button
                         type="button"
                         onClick={() => onUseInGenerator(scannedResult)}
-                        className="flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#1d7a5d] hover:bg-[#115a49] text-white cursor-pointer"
+                        className="primary-action flex items-center gap-1.5 py-2 px-3.5 rounded-xl text-xs font-semibold cursor-pointer"
                       >
-                        <Sparkles className="w-4 h-4 text-indigo-400" />
+                        <Sparkles className="w-4 h-4 text-white/80" />
                         <span>Load into Generator</span>
                       </button>
                     )}

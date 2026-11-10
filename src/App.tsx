@@ -131,11 +131,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f5f1ea] text-[#1d1a17] flex flex-col font-sans">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:font-semibold focus:text-[#1d7a5d] focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
       <Navbar onNavigateTo={handleScrollTo} activeSection={activeSection} />
 
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <Hero onNavigateTo={handleScrollTo} />
 
         <QRGenerator

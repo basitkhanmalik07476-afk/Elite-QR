@@ -23,14 +23,23 @@ export const Footer: React.FC<FooterProps> = ({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-x-5 gap-y-8 sm:gap-8 pb-12 border-b border-[#e8dfd3] dark:border-[#1b2a2f]">
           <div className="col-span-2 md:col-span-4 lg:col-span-5 sm:pr-4">
-            <button
-              type="button"
-              onClick={() => onNavigateTo('hero')}
+            <a
+              href="#hero"
               aria-label="QuickQR home"
               className="inline-flex items-center gap-2.5 mb-4 rounded-lg text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1d7a5d] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#0d1418]"
             >
-              <img src="/quickqr-logo.png" alt="QuickQR — Create Once. Share Anywhere." className="h-auto w-[min(100%,230px)] max-w-full object-contain object-left" />
-            </button>
+              <picture>
+                <source srcSet="/quickqr-logo.webp" type="image/webp" />
+                <img
+                  src="/quickqr-logo.png"
+                  alt="QuickQR — Create Once. Share Anywhere."
+                  width="1828"
+                  height="413"
+                  decoding="async"
+                  className="h-auto w-[170px] max-w-full object-contain object-left"
+                />
+              </picture>
+            </a>
 
             <p className="text-xs sm:text-sm text-[#5b534d] dark:text-[#c9d4cf] leading-relaxed max-w-[300px] mb-6">
               Create, customize, and share beautiful QR codes for your digital and everyday needs. Simple tools, reliable scans, and seamless connections.
@@ -71,34 +80,34 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-[#5b534d] dark:text-[#c9d4cf]">
               <li>
-                <button type="button" onClick={() => onNavigateTo('hero')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <a href="#hero" className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Home
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigateTo('generator')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <a href="#generator" className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   QR Generator
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigateTo('scanner')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <a href="#scanner" className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   QR Scanner
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigateTo('features')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <a href="#features" className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Features
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigateTo('how-it-works')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <a href="#how-it-works" className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   How It Works
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigateTo('use-cases')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <a href="#use-cases" className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Use Cases
-                </button>
+                </a>
               </li>
             </ul>
           </div>
@@ -109,32 +118,32 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-[#5b534d] dark:text-[#c9d4cf]">
               <li>
-                <button type="button" onClick={() => handleTypeClick('url')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('url')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Website Link QR
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('wifi')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('wifi')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Wi-Fi Password QR
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('vcard')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('vcard')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Digital Business Card (vCard)
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('whatsapp')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('whatsapp')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   WhatsApp Direct Chat QR
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('payment')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('payment')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Bank / Wallet Payment QR
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => handleTypeClick('crypto')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <button type="button" onClick={() => handleTypeClick('crypto')} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Crypto Payment QR
                 </button>
               </li>
@@ -147,24 +156,24 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs sm:text-sm text-[#5b534d] dark:text-[#c9d4cf] md:block md:space-y-2.5">
               <li>
-                <button type="button" onClick={onOpenPrivacy} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <button type="button" onClick={onOpenPrivacy} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Privacy Policy
                 </button>
               </li>
               <li>
-                <button type="button" onClick={onOpenPrivacy} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <button type="button" onClick={onOpenPrivacy} className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Privacy & Architecture
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigateTo('faq')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <a href="#faq" className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Static vs Dynamic FAQ
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigateTo('contact')} className="hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] transition-colors cursor-pointer">
+                <a href="#contact" className="link-action hover:text-[#1d7a5d] dark:hover:text-[#93d3b1] cursor-pointer">
                   Support & Contact
-                </button>
+                </a>
               </li>
             </ul>
           </div>

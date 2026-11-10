@@ -122,7 +122,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onToast }) => {
             <button
               type="submit"
               disabled={!hasSupportEmail}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-[#1d7a5d] hover:bg-[#115a49] shadow-[0_16px_28px_rgba(29,122,93,0.18)] text-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 min-h-[46px]"
+              className="primary-action w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold cursor-pointer min-h-[46px]"
             >
               <Send className="w-4 h-4" />
               <span>Submit Message</span>
